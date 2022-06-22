@@ -10,28 +10,58 @@ import requests
 from requests.structures import CaseInsensitiveDict
 from pathlib import Path
 
-TYPES = [
-
-]
 
 class DocuwareOperations(models.Model):
     _name = "docuware.operations"
     _description = "Methods to connect , upload and download documents"
 
     name = fields.Char(string='Name')
-    document_type = fields.Selection(selection=TYPES, string='Document type')
     docuware_cabinet_read_id = fields.Many2one('docuware.cabinets', string='Download Cabinet')
     docuware_cabinet_write_id = fields.Many2one('docuware.cabinets', string='Upload Cabinet')
-    field_ids = fields.One2many('docuware.fields','operation_id', string='Fields')
+    #field_ids = fields.One2many('docuware.fields','operation_id', string='Fields in Docs',
+    #                            help="Mandatory fields to find defined in docuware to download the doc")
 
-    def do_operation(self):
-        c_path = Path('cookies.bin')
-        s = self.docuware_cabinet_read_id.login(c_path)
+    def login(self, c_path):
+        # Session will hold the cookies
+        credentials = {'user': self.env.user.company_id.docuware_user,
+                       'password': self.env.user.company_id.docuware_pass}
+        s = requests.Session()
+        print("DEBUG", s)
+        s.headers.update({'User-Agent': 'welcome-letter'})
+        s.headers.update({'Accept': 'application/json'})
+        if c_path.exists():
+            with open(c_path, mode='rb') as f:
+                s.cookies.update(pickle.load(f))
 
-        for document in self.docuware_cabinet_read_id.docuware_cabinet_document_ids:
-            if document.docuware_operation_done:
-                print("Not done")
-                print(document.name)
-                document.get_document_data_from_operation(self.field_ids, s)
+        else:
+            url = f'{self.env.user.company_id.docuware_url}/docuware/platform/Account/Logon'
+            payload = {
+                'LicenseType': '',
+                'UserName': credentials['user'],
+                'Password': credentials['password'],
+                'RedirectToMyselfInCaseOfError': 'false',
+                'RememberMe': 'false',
+            }
 
-        self.docuware_cabinet_read_id.logout(c_path, s)
+            headers = {
+                'Content-Type': 'application/x-www-form-urlencoded',
+            }
+            print("DEBUG", payload, "=", url)
+            response = s.request('POST', url, headers=headers, data=payload, timeout=30)
+            print("DEBUG", response)
+            if response.status_code == 401:
+                logging.info(
+                    'Unable to log-in, this could also mean the user is rate limited, locked or user-agent missmatch.')
+            response.raise_for_status()
+            with open('cookies.bin', mode='wb') as f:
+                pickle.dump(s.cookies, f)
+            return s
+        return s
+
+
+    def logout(self, c_path, s):
+        print("LOG OUT")
+        url = f'{self.env.user.company_id.docuware_url}/docuware/platform/Account/Logoff'
+        r = s.request('GET', url, timeout=30)
+        r.raise_for_status()
+        c_path.unlink()

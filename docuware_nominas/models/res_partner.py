@@ -7,18 +7,14 @@
 from odoo import api, fields, models, _
 import pickle, logging, json
 import requests
+import base64
 from requests.structures import CaseInsensitiveDict
+from datetime import datetime, timedelta
 from pathlib import Path
 
-TYPES = [
 
-]
+class ResPartner(models.Model):
+    _inherit = "res.partner"
 
-class DocuwareFields(models.Model):
-    _name = "docuware.fields"
-    _description = "Fields to sync by document type"
+    document_ids = fields.Many2many('docuware.document', string='Viafirma Documents')
 
-    name = fields.Char(string='Name')
-    company_id = fields.Many2one('res.company', string='Operation')
-    document_id = fields.Many2one('docuware.documents', string='Document')
-    value = fields.Char(string='Value')

@@ -27,7 +27,6 @@ class DocuwareCabinets(models.Model):
         credentials = {'user': self.env.user.company_id.docuware_user,
                        'password': self.env.user.company_id.docuware_pass}
         s = requests.Session()
-        print("DEBUG", s)
         s.headers.update({'User-Agent': 'welcome-letter'})
         s.headers.update({'Accept': 'application/json'})
         if c_path.exists():
@@ -59,29 +58,28 @@ class DocuwareCabinets(models.Model):
             return s
         return s
 
-    #NEEDS REVISION
-    def upload(self, path, fields, s) -> dict:
-        # upload file, by reusing login cookie
-        p = Path(path)
-        file_name = p.name
-        url = f'{self.env.user.company_id.docuware_url}/docuware/platform/FileCabinets/{self.docuware_cabinet_id}/Documents'
-        f = []
-        for key, value in fields.items():
-            f.append({
-                'FieldName': key,
-                'Item': value,
-                'ItemElementName': 'String',
-            })
+    #def upload(self, path, fields, s) -> dict:
+    #    # upload file, by reusing login cookie
+    #    p = Path(path)
+    #    file_name = p.name
+    #    url = f'{self.env.user.company_id.docuware_url}/docuware/platform/FileCabinets/{self.docuware_cabinet_id}/Documents'
+    #    f = []
+    #    for key, value in fields.items():
+    #        f.append({
+    #            'FieldName': key,
+    #            'Item': value,
+    #            'ItemElementName': 'String',
+    #        })
 
-        index_json = '{"Fields": ' + json.dumps(f) + '}'
-        multipart_form_data = {
-            # name: (filename, data, content_type, headers)
-            'document': (None, index_json, 'application/json'),
-            'file[]': (file_name, p.read_bytes(), 'application/pdf'),
-        }
-        r = s.request('POST', url, files=multipart_form_data, timeout=30)
-        r.raise_for_status()
-        return r.json()
+    #    index_json = '{"Fields": ' + json.dumps(f) + '}'
+    #    multipart_form_data = {
+    #        # name: (filename, data, content_type, headers)
+    #        'document': (None, index_json, 'application/json'),
+    #        'file[]': (file_name, p.read_bytes(), 'application/pdf'),
+    #    }
+    #    r = s.request('POST', url, files=multipart_form_data, timeout=30)
+    #    r.raise_for_status()
+    #    return r.json()
 
     def logout(self, c_path, s):
         print("LOG OUT")
@@ -133,7 +131,9 @@ class DocuwareCabinets(models.Model):
         except Exception as e:
             raise UserError("Failed to connect to Docuware Server , please try again later")
 
-    def get_filecabinet_documents(self):
+    def get_filecabinet_documents(self, type):
+        if not type:
+            type = 'undef'
         try:
             c_path = Path('cookies.bin')
             s = self.login(c_path)
@@ -144,26 +144,22 @@ class DocuwareCabinets(models.Model):
             if resp.status_code == 200:
                 # return json.loads(resp.content.decode('utf-8'))
                 res = json.loads(resp.content.decode('utf-8'))
-                # print(res)
                 docuware_documents = self.env['docuware.documents'].search([('docuware_cabinet_id', '=', self.id)])
                 odoo_documents = []
                 for document in docuware_documents:
                     odoo_documents.append(document.name)
                 for i in range(len(res['Items'])):
+                    print("ITEMS", res['Items'][i]['Title'])
                     if res['Items'][i]['Title'] not in odoo_documents:
                         new_document = self.env['docuware.documents'].create({
                             'name': res['Items'][i]['Title'],
                             'docuware_cabinet_id': self.id,
+                            'document_type': type,
                             #'docuware_cabinet_guid': filecabinets['FileCabinet'][j]['Id'],
                         })
                         for j in range(len(res['Items'][i]['Fields'])):
                             if res['Items'][i]['Fields'][j]['FieldName'] == 'DWDOCID':
                                 new_document.docuware_document_guid = res['Items'][i]['Fields'][j]['Item']
-                        #print(res['Items'][i]['Fields'][j])
-                        #if res['Items'][i]['Fields'][j]['IsNull'] == False:
-                        #    print(res['Items'][i]['Fields'][j]['Item'])
-                    # if res['Organization'][i]['Name'] == self.env.user.company_id.docuware_organization:
-                    #    orgid = res['Organization'][i]['Guid']
 
             self.logout(c_path, s)
         except Exception as e:

@@ -3,3 +3,4 @@ access_docuware_cabinets, Docuware Cabinets,model_docuware_cabinets,base.group_u
 access_docuware_operations, Docuware Operations,model_docuware_operations,base.group_user,1,1,1,1
 access_docuware_documents, Docuware documents,model_docuware_documents,base.group_user,1,1,1,1
 access_docuware_fields, Docuware fields,model_docuware_fields,base.group_user,1,1,1,1
+access_docuware_stage, Docuware Stage,model_docuware_stage,base.group_user,1,1,1,1

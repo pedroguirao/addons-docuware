@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_docuware_config" model="ir.ui.view">
+        <field name="name">Docuware Configuration</field>
+        <field name="model">res.company</field>
+        <field name="type">form</field>
+        <field name="inherit_id" ref="base.view_company_form"/>
+        <field name="arch" type="xml">
+            <group name="docuware_login" position="after">
+                <notebook colspan="4">
+                    <page string="Nominas" name="nominas">
+                        <group>
+                            <group name="Docuware">
+                                <field name="docuware_cabinet_read_id" />
+                                <field name="docuware_cabinet_write_id" />
+                                <field name="mandatory_field_ids"
+                                       widget="many2many_tags" domain="[('document_id', '=', False)]"
+                                       placeholder="NIF, VAT, CIF, ..."/>
+                            </group>
+                            <group name="Viafirma">
+                                <field name="viafirma_template" />
+                                <field name="viafirma_fields" widget="many2many_tags"
+                                       domain="[('document_id', '=', False)]"
+                                       placeholder="NIF, VAT, CIF, ..."/>
+                                <field name="viafirma_notifications" widget="many2many_tags"/>
+                            </group>
+                        </group>
+                    </page>
+                </notebook>
+            </group>
+        </field>
+    </record>
+
+</odoo>

@@ -1,0 +1,82 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<odoo>
+
+    <record id="action_docuware_nominas" model="ir.actions.act_window">
+        <field name="binding_model_id" eval="False"/>
+        <field name="binding_type">action</field>
+        <field name="domain" eval="[('document_type', '=', 'nomina')]"/>
+        <field name="filter" eval="False"/>
+        <field name="groups_id" eval="[(6, 0, [])]"/>
+        <field name="limit">80</field>
+        <field name="name">Nominas</field>
+        <field name="res_model">docuware.documents</field>
+        <field name="search_view_id" eval="False"/>
+        <field name="target">current</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="usage" eval="False"/>
+        <field name="view_ids" eval="[(5, 0, 0),
+        (0, 0, {'view_mode': 'kanban', 'view_id': ref('docuware_nominas_kanban')}),
+        (0, 0, {'view_mode': 'tree', 'view_id': ref('docuware_nominas_tree')}),
+        (0, 0, {'view_mode': 'form', 'view_id': ref('docuware_nominas_form')})]"/>
+
+    </record>
+
+    <menuitem
+            action="action_docuware_nominas"
+            id="menu_nominas"
+            name="Docuware Nóminas"
+            sequence="10"
+            web_icon="docuware_nominas,static/description/icon.png"
+    />
+
+    <record id="menu_docuware_nominas" model="ir.ui.menu">
+        <field name="action" ref="action_docuware_nominas"/>
+        <field name="active" eval="True"/>
+        <field name="groups_id" eval="False"/>
+        <field name="name">Nominas</field>
+        <field name="parent_id" ref="menu_nominas"/>
+        <field name="sequence">1</field>
+        <field name="web_icon" eval="False"/>
+    </record>
+
+    <record id="menu_operations" model="ir.ui.menu">
+        <field name="active" eval="True"/>
+        <field name="groups_id" eval="[(4, ref('base.user_root'))]"/>
+        <field name="name">Operations</field>
+        <field name="parent_id" ref="menu_nominas"/>
+        <field name="sequence">2</field>
+        <field name="web_icon" eval="False"/>
+    </record>
+
+     <record id="menu_docuware_nominas_sync" model="ir.ui.menu">
+         <field name="action" ref="docuware_get_nominas"/>
+        <field name="active" eval="True"/>
+        <field name="groups_id" eval="False"/>
+        <field name="name">Get Nominas</field>
+        <field name="parent_id" ref="menu_operations"/>
+        <field name="sequence">1</field>
+        <field name="web_icon" eval="False"/>
+    </record>
+
+    <record id="menu_docuware_nominas_data_sync" model="ir.ui.menu">
+         <field name="action" ref="docuware_get_nominas_data"/>
+        <field name="active" eval="True"/>
+        <field name="groups_id" eval="False"/>
+        <field name="name">Get Nominas Data</field>
+        <field name="parent_id" ref="menu_operations"/>
+        <field name="sequence">2</field>
+        <field name="web_icon" eval="False"/>
+    </record>
+
+    <record id="menu_docuware_signed_nominas" model="ir.ui.menu">
+         <field name="action" ref="docuware_get_signed_nominas"/>
+        <field name="active" eval="True"/>
+        <field name="groups_id" eval="False"/>
+        <field name="name">Get Signed Nominas</field>
+        <field name="parent_id" ref="menu_operations"/>
+        <field name="sequence">3</field>
+        <field name="web_icon" eval="False"/>
+    </record>
+
+
+</odoo>

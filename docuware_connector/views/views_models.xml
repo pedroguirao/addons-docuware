@@ -9,16 +9,13 @@
                     <h2>
                         <field name="name"/>
                     </h2>
-                    <group name="basic_type" col="1">
-                        <field name="field_ids" widget="many2many_tags"/>
-                    </group>
                     <group name="basic_params" col="4">
                         <field name="docuware_cabinet_read_id"/>
                         <field name="docuware_cabinet_write_id"/>
                     </group>
-                    <group name="basic_type" col="1">
+                    <!--<group name="operations" col="1">
                         <button name="do_operation" string="Do Operation" type="object" icon="fa-share-square-o"/>
-                    </group>
+                    </group>-->
                 </sheet>
 
             </form>
@@ -86,11 +83,11 @@
                         <field name="docuware_cabinet"/>
                         <field name="docuware_cabinet_guid"/>
                     </group>
-                    <group>
+                    <group groups="base.group_system">
                         <button name="get_filecabinet_documents" string="Get Documents" type="object" class="oe_highlight oe_read_only"/>
                     </group>
                     <notebook>
-                        <page name="documents" string="Documents">
+                        <page name="documents" string="Documents" groups="base.group_system">
                             <group name="documents" col="4">
                                 <field name="docuware_cabinet_document_ids">
                                     <tree name="documents_in_cabinet" string="Documents" create="false">
@@ -102,7 +99,7 @@
                                 </field>
                             </group>
                         </page>
-                        <page name="error_log" string="Log">
+                        <page name="error_log" string="Log" groups="base.group_system">
                             <group name="documents" col="4">
                                 <field name="docuware_cabinet_error_log"/>
                             </group>
@@ -126,7 +123,7 @@
     <record id="docuware_document_form" model="ir.ui.view">
         <field name="active" eval="True"/>
         <field name="arch" type="xml">
-            <form>
+            <form create="false">
                 <sheet string="Document">
                     <h2>
                         <field name="name"/>
@@ -136,6 +133,9 @@
                         <field name="docuware_binary"/>
                         <field name="docuware_cabinet_id"/>
                         <field name="docuware_document_guid"/>
+                    </group>
+                    <group name="basic_fields" col="1">
+                        <field name="field_ids" widget="many2many_tags"/>
                     </group>
                     <group name="docuware_json" col="4">
                         <field name="docuware_json"/>
@@ -180,7 +180,7 @@
             <form>
                 <sheet string="Fields">
                     <group name="basic_params" col="4">
-                        <field name="name"/>
+                        <field name="name" />
                     </group>
                 </sheet>
 

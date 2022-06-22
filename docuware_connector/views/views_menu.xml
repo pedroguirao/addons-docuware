@@ -10,7 +10,7 @@
         <field name="filter" eval="False"/>
         <field name="groups_id" eval="[(6, 0, [])]"/>
         <field name="limit">80</field>
-        <field name="name">Docuware</field>
+        <field name="name">Directories</field>
         <field name="res_model">docuware.cabinets</field>
         <field name="search_view_id" eval="False"/>
         <field name="target">current</field>
@@ -23,12 +23,11 @@
         <field name="binding_model_id" eval="False"/>
         <field name="binding_type">action</field>
         <!--<field name="context" eval="False"></field>-->
-        <!-- <field name="domain" eval="[('tag_ids.facet_id.name', '=', 'OCR')]"/>-->
-        <field name="domain" eval="False"/>
+        <field name="domain" eval="[('document_id', '=', False)]"/>
         <field name="filter" eval="False"/>
         <field name="groups_id" eval="[(6, 0, [])]"/>
         <field name="limit">80</field>
-        <field name="name">Docuware</field>
+        <field name="name">Fields</field>
         <field name="res_model">docuware.fields</field>
         <field name="search_view_id" eval="False"/>
         <field name="target">current</field>
@@ -57,22 +56,12 @@
     </record>
 
     <menuitem
-            action="action_docuware_cabinets"
+            action="action_configuration_fields"
             id="menu_docuware"
             name="Docuware"
             sequence="10"
             web_icon="docuware_connector,static/description/icon.png"
     />
-
-    <record id="menu_docuware_cabinets" model="ir.ui.menu">
-         <field name="action" ref="action_docuware_cabinets"/>
-        <field name="active" eval="True"/>
-        <field name="groups_id" eval="False"/>
-        <field name="name">Cabinets</field>
-        <field name="parent_id" ref="menu_docuware"/>
-        <field name="sequence">1</field>
-        <field name="web_icon" eval="False"/>
-    </record>
 
     <record id="menu_docuware_operations" model="ir.ui.menu">
         <field name="active" eval="True"/>
@@ -83,7 +72,7 @@
         <field name="web_icon" eval="False"/>
     </record>
 
-    <record id="menu_docuware_operations_apps" model="ir.ui.menu">
+    <!--<record id="menu_docuware_operations_apps" model="ir.ui.menu">
          <field name="action" ref="action_docuware_operations"/>
         <field name="active" eval="True"/>
         <field name="groups_id" eval="False"/>
@@ -91,13 +80,13 @@
         <field name="parent_id" ref="menu_docuware_operations"/>
         <field name="sequence">1</field>
         <field name="web_icon" eval="False"/>
-    </record>
+    </record>-->
 
     <record id="menu_docuware_operations_sync" model="ir.ui.menu">
          <field name="action" ref="docuware_sync_cabinets"/>
         <field name="active" eval="True"/>
         <field name="groups_id" eval="False"/>
-        <field name="name">Sync Cabinets</field>
+        <field name="name">Sync Directories</field>
         <field name="parent_id" ref="menu_docuware_operations"/>
         <field name="sequence">2</field>
         <field name="web_icon" eval="False"/>
@@ -116,9 +105,19 @@
          <field name="action" ref="action_configuration_fields"/>
         <field name="active" eval="True"/>
         <field name="groups_id" eval="False"/>
-        <field name="name">Sync Fields</field>
+        <field name="name">Fields</field>
         <field name="parent_id" ref="menu_docuware_configuration"/>
         <field name="sequence">1</field>
+        <field name="web_icon" eval="False"/>
+    </record>
+
+    <record id="menu_docuware_cabinets" model="ir.ui.menu">
+         <field name="action" ref="action_docuware_cabinets"/>
+        <field name="active" eval="True"/>
+        <field name="groups_id" eval="False"/>
+        <field name="name">Directories</field>
+        <field name="parent_id" ref="menu_docuware_configuration"/>
+        <field name="sequence">2</field>
         <field name="web_icon" eval="False"/>
     </record>
 

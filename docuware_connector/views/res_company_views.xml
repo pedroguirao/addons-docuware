@@ -9,11 +9,11 @@
         <field name="arch" type="xml">
             <xpath expr="//notebook/page[1]" position="after">
                 <page name="docuware" string="Docuware">
-                    <group>
+                    <group name="docuware_url">
                         <field name="docuware_organization"/>
                         <field name="docuware_url"/>
                     </group>
-                    <group>
+                    <group name="docuware_login">
                         <field name="docuware_user"/>
                         <field name="docuware_pass"/>
                     </group>

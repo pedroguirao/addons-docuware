@@ -1,0 +1,45 @@
+<odoo>
+
+    <record id="docuware_get_nominas" model="ir.actions.server">
+        <field name="name">Sync Nominas from Docuware</field>
+        <field name="model_id" ref="model_docuware_operations"/>
+        <field name="state">code</field>
+        <field name="code">model.get_nominas()</field>
+    </record>
+
+    <record id="docuware_get_nominas_data" model="ir.actions.server">
+        <field name="name">Sync Nominas data from Docuware</field>
+        <field name="model_id" ref="model_docuware_operations"/>
+        <field name="state">code</field>
+        <field name="code">model.get_nominas_data()</field>
+    </record>
+
+    <record id="docuware_get_signed_nominas" model="ir.actions.server">
+        <field name="name">Update Signed Nominas</field>
+        <field name="model_id" ref="model_docuware_operations"/>
+        <field name="state">code</field>
+        <field name="code">model.get_signed_nominas()</field>
+    </record>
+
+        <!-- Nominas Stages -->
+    <record id="docuware_stage_1" model="docuware.stage">
+        <field name="sequence">10</field>
+        <field name="name">Ready</field>
+        <!--<field name="legend_blocked">Need functional or technical help</field>
+        <field name="legend_done">Buzz or set as done</field>-->
+    </record>
+    <record id="docuware_stage_2" model="docuware.stage">
+        <field name="sequence">20</field>
+        <field name="name">Processing</field>
+        <!--<field name="fold" eval="True"/>
+        <field name="is_closed" eval="True"/>-->
+    </record>
+    <record id="docuware_stage_3" model="docuware.stage">
+        <field name="sequence">30</field>
+        <field name="name">Signed</field>
+        <!--<field name="legend_done">Ready to reopen</field>
+        <field name="fold" eval="True"/>
+        <field name="is_closed" eval="True"/>-->
+    </record>
+
+</odoo>

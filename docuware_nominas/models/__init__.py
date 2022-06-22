@@ -5,8 +5,9 @@
 #    PedroGuirao pedro@serincloud.com
 ##############################################################################
 from . import docuware_operations
-from . import res_company
-from . import docuware_cabinets
-from . import docuware_documents
-from . import docuware_fields
+from . import viafirma
 from . import docuware_stage
+from . import docuware_nominas
+from . import res_partner
+from . import res_company
+

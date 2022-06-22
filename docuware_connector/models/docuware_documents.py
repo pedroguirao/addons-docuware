@@ -12,6 +12,9 @@ from requests.structures import CaseInsensitiveDict
 from datetime import datetime, timedelta
 from pathlib import Path
 
+TYPES = [
+    ('undef', 'Undefined'),
+]
 
 class DocuwareDocuments(models.Model):
     _name = "docuware.documents"
@@ -22,10 +25,47 @@ class DocuwareDocuments(models.Model):
     #docuware_operations_id = fields.Many2one('docuware.operations', string='Operations')
     docuware_document_guid = fields.Char(string='Cabinet Guid')
     docuware_document_error_log = fields.Text(string="Error log")
+
     docuware_operation_done = fields.Boolean("Operation Done")
+
     docuware_json = fields.Text("Server Json")
     docuware_binary = fields.Binary("Original")
+    field_ids = fields.One2many('docuware.fields', 'document_id', string='Fields')
+    document_type = fields.Selection(selection=TYPES, string='Document type')
 
+    kanban_state = fields.Selection([
+        ('done', 'Done'),
+        ('blocked', 'Blocked')], string='Kanban State',
+        copy=False, default='done', required=True)
+    kanban_state_label = fields.Char(compute='_compute_kanban_state_label', string='Kanban State Label', tracking=True)
+    legend_blocked = fields.Char(
+        'Red Kanban Label', default=lambda s: _('Blocked'), translate=True, required=True,
+        help='Override the default value displayed for the blocked state for kanban selection, when the task or issue is in that stage.')
+    legend_done = fields.Char(
+        'Green Kanban Label', default=lambda s: _('Done'), translate=True, required=True,
+        help='Override the default value displayed for the done state for kanban selection, when the task or issue is in that stage.')
+
+    def _default_stage(self):
+        return self.env['docuware.stage'].search([('name', '=', 'New')], limit=1).id
+
+    @api.model
+    def _read_group_stage_ids(self, stages, domain, order):
+        stage_ids = self.env['docuware.stage'].search([])
+        return stage_ids
+
+    stage_id = fields.Many2one('docuware.stage', string='Stage', store=True, readonly=False, ondelete='restrict',
+                               tracking=True, index=True, group_expand='_read_group_stage_ids', copy=False,
+                               default=_default_stage)
+
+    @api.depends('stage_id', 'kanban_state')
+    def _compute_kanban_state_label(self):
+        for nomina in self:
+            if nomina.kanban_state == 'blocked':
+                nomina.kanban_state_label = nomina.legend_blocked
+            else:
+                nomina.kanban_state_label = nomina.legend_done
+
+    ### Show information sent by docuware about document, just for debug ###
     def get_document_data(self):
         c_path = Path('cookies.bin')
         credentials = {'user': self.env.user.company_id.docuware_user,
@@ -61,6 +101,7 @@ class DocuwareDocuments(models.Model):
             if response.status_code == 200:
                 return base64.b64encode(response.content)
         else:
+            self.kanban_state_label = self.legend_blocked
             if not self.docuware_document_error_log:
                 self.docuware_document_error_log = str(datetime.now()) + " " + "No document received" + "\n"
             else:
@@ -82,20 +123,30 @@ class DocuwareDocuments(models.Model):
                     print(res['Links'][j]['rel'])
                     if res['Links'][j]['rel'] == "fileDownload":
                         fdownload = res['Links'][j]['href']
-                        print(fdownload)
                 self.docuware_json = res
 
                 for f in fields:
-                    print("FIELD", f.name)
                     for i in range(len(res['Fields'])):
-                        #print(res['Links'][i]['rel'])
                         if res['Fields'][i]['FieldName'] == f.name:
                             mandatory.append(f.name)
-                            print("Coincide", res['Fields'][i]['FieldName'])
-                            print(mandatory)
+                            exist_field = self.env['docuware.fields'].sudo().search(
+                                [('name', '=', res['Fields'][i]['FieldName']), ("document_id", "=", self.id)], limit=1)
+                            if not exist_field:
+                                self.env['docuware.fields'].create(
+                                    {'name': res['Fields'][i]['FieldName'], 'value': res['Fields'][i]['Item'],
+                                     'document_id': self.id})
                 if len(mandatory) == len(fields):
                     self.docuware_binary = self.generate_attachment(s, fdownload)
-
+                    return True
+                else:
+                    self.kanban_state_label = self.legend_blocked
+                    if not self.docuware_document_error_log:
+                        self.docuware_document_error_log = str(datetime.now()) + " " + "Need more fields in docuware " \
+                                                                                       "to complete operation" + "\n"
+                    else:
+                        self.docuware_document_error_log = str(datetime.now()) + " " + "Need more fields in docuware " \
+                                                                                       "to complete operation" + "\n"
+                    return False
         except Exception as e:
             if not self.docuware_document_error_log:
                 self.docuware_document_error_log = str(datetime.now()) + " " + str(e) + "\n"

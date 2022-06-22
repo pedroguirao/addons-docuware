@@ -1,0 +1,186 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<odoo>
+
+    <!--<record id="docuware_document_form_viafirma" model="ir.ui.view">
+        <field name="name">docuware_documents_form_viafirma</field>
+        <field name="model">docuware.documents</field>
+        <field name="type">tree</field>
+        <field name="inherit_id" ref="docuware_connector.docuware_document_form"/>
+        <field name="arch" type="xml">
+            <group name="basic_fields" position="replace">
+                <group name="fields_operation" col="4">
+                    <field name="field_ids" widget="many2many_tags"/>
+                    <field name="partner_ids" widget="many2many_tags"/>
+                </group>
+            </group>
+        </field>
+    </record>-->
+
+    <record id="docuware_nominas_form" model="ir.ui.view">
+        <field name="active" eval="True"/>
+        <field name="arch" type="xml">
+            <form create="false">
+                <sheet string="Nominas">
+                    <h2>
+                        <field name="name"/>
+                    </h2>
+                    <group name="basic_params" col="4">
+                        <field name="docuware_nomina_done"/>
+                        <field name="docuware_binary"/>
+                        <field name="docuware_cabinet_id"/>
+                        <field name="docuware_document_guid"/>
+                    </group>
+                    <group name="basic_fields" col="2">
+                        <field name="partner_ids" widget="many2many_tags"/>
+                        <field name="viafirma_id" />
+                    </group>
+                    <group name="upload_button">
+                        <button name="upload" string="Upload Document" type="object" class="oe_highlight oe_read_only"/>
+                    </group>
+                    <group name="docuware_connection_info" position="after">
+                        <notebook colspan="4">
+                            <page string="Log" name="log">
+                                <group name="docuware_log" col="4">
+                                    <field name="docuware_document_error_log"/>
+                                </group>
+                            </page>
+                            <page string="Json" name="json">
+                                <group name="docuware_json" col="4">
+                                    <field name="docuware_json"/>
+                                </group>
+                            </page>
+                        </notebook>
+                    </group>
+
+                    <!--<group>
+                        <button name="get_filecabinet_documents" string="Get Documents" type="object" class="oe_highlight oe_read_only"/>
+                    </group>
+                    <notebook>
+                        <page name="documents" string="Documents">
+                            <group name="documents" col="4">
+                                <field name="docuware_cabinet_document_ids">
+                                    <tree name="documents_in_cabinet" string="Documents">
+                                        <field name="name"/>
+                                        <button name="get_document_data" string="" type="object" icon="fa-share-square-o"/>
+                                    </tree>
+                                </field>
+                            </group>
+                        </page>
+                        <page name="error_log" string="Log">
+                            <group name="documents" col="4">
+                                <field name="docuware_cabinet_error_log"/>
+                            </group>
+                        </page>
+                    </notebook>-->
+                </sheet>
+            </form>
+        </field>
+        <field name="field_parent" eval="False"/>
+        <field name="groups_id" eval="[(6, 0, [])]"/>
+        <field name="inherit_id" eval="False"/>
+        <field name="key" eval="False"/>
+        <field name="mode">primary</field>
+        <field name="model">docuware.documents</field>
+        <field name="name">Default form view for Docuware Nominas</field>
+        <field name="priority">16</field>
+        <field name="type">form</field>
+    </record>
+
+    <record id="docuware_nominas_tree" model="ir.ui.view">
+        <field name="active" eval="True"/>
+        <field name="arch" type="xml">
+            <tree create="false">
+                <field name="name"/>
+                <field name="partner_ids" widget="many2many_tags"/>
+                <field name="docuware_nomina_done"/>
+            </tree>
+        </field>
+        <field name="field_parent" eval="False"/>
+        <field name="groups_id" eval="[(6, 0, [])]"/>
+        <field name="inherit_id" eval="False"/>
+        <field name="key" eval="False"/>
+        <field name="mode">primary</field>
+        <field name="model">docuware.documents</field>
+        <field name="name">Default tree view for Docuware Documents</field>
+        <field name="priority">16</field>
+        <field name="type">tree</field>
+    </record>
+
+    <record id="docuware_nominas_kanban" model="ir.ui.view">
+        <field name="active" eval="True"/>
+        <field name="arch" type="xml">
+            <kanban default_group_by="stage_id" class="o_kanban_small_column" sample="1">
+                <field name="stage_id" options="{'group_by_tooltip': {'description': 'Description'}}"/>
+                <field name="legend_blocked"/>
+                <field name="legend_done"/>
+                <progressbar field="kanban_state" colors="{&quot;done&quot;: &quot;success&quot;, &quot;blocked&quot;: &quot;danger&quot;}"/>
+                <templates>
+                    <t t-name="kanban-box">
+                        <div t-attf-class="oe_kanban_card oe_kanban_global_click">
+                            <div class="oe_kanban_content">
+                                <div class="o_kanban_record_top">
+                                    <div class="o_kanban_record_headings">
+                                        <strong class="o_kanban_record_title"><field name="name"/></strong>
+
+                                        <t t-if="record.partner_ids">
+                                            <field name="partner_ids" widget="many2many_tags"/>
+                                        </t>
+                                    </div>
+                                    <div class="o_dropdown_kanban dropdown" t-if="!selection_mode" groups="base.group_user">
+                                        <a role="button" class="dropdown-toggle o-no-caret btn" data-toggle="dropdown" data-display="static" href="#" aria-label="Dropdown menu" title="Dropdown menu">
+                                            <span class="fa fa-ellipsis-v"/>
+                                        </a>
+                                        <div class="dropdown-menu" role="menu">
+                                            <a t-if="widget.editable" role="menuitem" type="set_cover" class="dropdown-item" data-field="displayed_image_id">Set Cover Image</a>
+                                            <a name="185" role="menuitem" type="action" class="dropdown-item">Share</a>
+                                            <a t-if="widget.editable" role="menuitem" type="edit" class="dropdown-item">Edit</a>
+                                            <a t-if="widget.editable" role="menuitem" class="dropdown-item" name="toggle_active" type="object">
+                                                <!-- <t t-if="record.active.raw_value">Archive</t>
+                                                 <t t-if="!record.active.raw_value">Restore</t>-->
+                                            </a>
+                                            <a t-if="widget.deletable" role="menuitem" type="delete" class="dropdown-item">Delete</a>
+                                            <div role="separator" class="dropdown-divider"/>
+                                            <ul class="oe_kanban_colorpicker" data-field="color"/>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="o_kanban_record_body">
+                                    <!--<field name="tag_ids" widget="many2many_tags" options="{'color_field': 'color'}" invisible="context.get('fsm_mode', False)"/>
+                                    <div t-if="record.displayed_image_id.value">
+                                        <field name="displayed_image_id" widget="attachment_image"/>
+                                    </div>-->
+                                </div>
+                                <div class="o_kanban_record_bottom" t-if="!selection_mode">
+                                    <div class="oe_kanban_bottom_left">
+                                        <!-- <field name="priority" widget="priority"/>
+                                         <field name="activity_ids" widget="kanban_activity"/>
+                                         <b t-if="record.rating_ids.raw_value.length">
+                                             <span style="font-weight:bold;" class="fa fa-fw mt4 fa-smile-o text-success" t-if="record.rating_last_value.value == 5" title="Latest Rating: Satisfied" role="img" aria-label="Happy face"/>
+                                             <span style="font-weight:bold;" class="fa fa-fw mt4 fa-meh-o text-warning" t-if="record.rating_last_value.value == 3" title="Latest Rating: Not Satisfied" role="img" aria-label="Neutral face"/>
+                                             <span style="font-weight:bold;" class="fa fa-fw mt4 fa-frown-o text-danger" t-if="record.rating_last_value.value == 1" title="Latest Rating: Higly Dissatisfied" role="img" aria-label="Sad face"/>
+                                         </b>-->
+                                    </div>
+                                    <div class="oe_kanban_bottom_right" t-if="!selection_mode">
+                                         <field name="kanban_state" widget="state_selection" groups="base.group_user"/>
+                                         <!--<field name="user_id" widget="many2one_avatar_user"/>-->
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="oe_clear"/>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+        <field name="field_parent" eval="False"/>
+        <field name="groups_id" eval="[(6, 0, [])]"/>
+        <field name="inherit_id" eval="False"/>
+        <field name="key" eval="False"/>
+        <field name="mode">primary</field>
+        <field name="model">docuware.documents</field>
+        <field name="name">Default form view for Docuware documents</field>
+        <field name="priority">16</field>
+        <field name="type">kanban</field>
+    </record>
+
+</odoo>

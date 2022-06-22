@@ -7,4 +7,11 @@
         <field name="code">model.sync_cabinets()</field>
     </record>
 
+    <!-- Stages -->
+    <record id="docuware_stage_0" model="docuware.stage">
+        <field name="sequence">1</field>
+        <field name="name">New</field>
+        <!--<field name="legend_blocked">Blocked</field>-->
+    </record>
+
 </odoo>
