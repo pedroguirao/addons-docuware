@@ -6,7 +6,6 @@
 ##############################################################################
 from . import docuware_operations
 from . import viafirma
-from . import docuware_stage
 from . import docuware_nominas
 from . import res_partner
 from . import res_company

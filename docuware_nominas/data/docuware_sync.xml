@@ -14,6 +14,13 @@
         <field name="code">model.get_nominas_data()</field>
     </record>
 
+    <record id="call_viafirma_nominas" model="ir.actions.server">
+        <field name="name">Call Viafirma Nominas</field>
+        <field name="model_id" ref="model_docuware_operations"/>
+        <field name="state">code</field>
+        <field name="code">model.call_viafirma_nominas()</field>
+    </record>
+
     <record id="docuware_get_signed_nominas" model="ir.actions.server">
         <field name="name">Update Signed Nominas</field>
         <field name="model_id" ref="model_docuware_operations"/>
@@ -21,7 +28,7 @@
         <field name="code">model.get_signed_nominas()</field>
     </record>
 
-        <!-- Nominas Stages -->
+    <!-- Nominas Stages -->
     <record id="docuware_stage_1" model="docuware.stage">
         <field name="sequence">10</field>
         <field name="name">Ready</field>

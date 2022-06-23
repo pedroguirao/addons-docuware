@@ -67,7 +67,7 @@
         <field name="active" eval="True"/>
         <field name="groups_id" eval="False"/>
         <field name="name">Operations</field>
-        <field name="parent_id" ref="menu_docuware"/>
+        <field name="parent_id" ref="menu_docuware_configuration"/>
         <field name="sequence">2</field>
         <field name="web_icon" eval="False"/>
     </record>
@@ -88,7 +88,7 @@
         <field name="groups_id" eval="False"/>
         <field name="name">Sync Directories</field>
         <field name="parent_id" ref="menu_docuware_operations"/>
-        <field name="sequence">2</field>
+        <field name="sequence">5</field>
         <field name="web_icon" eval="False"/>
     </record>
 

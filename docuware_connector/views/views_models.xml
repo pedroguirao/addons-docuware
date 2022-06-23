@@ -84,7 +84,7 @@
                         <field name="docuware_cabinet_guid"/>
                     </group>
                     <group groups="base.group_system">
-                        <button name="get_filecabinet_documents" string="Get Documents" type="object" class="oe_highlight oe_read_only"/>
+                        <button name="get_default_filecabinet_documents" string="Get Documents" type="object" class="oe_highlight oe_read_only"/>
                     </group>
                     <notebook>
                         <page name="documents" string="Documents" groups="base.group_system">

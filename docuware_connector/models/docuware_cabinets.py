@@ -167,3 +167,6 @@ class DocuwareCabinets(models.Model):
                 self.docuware_cabinet_error_log = str(datetime.now()) + " " + str(e) + "\n"
             else:
                 self.docuware_cabinet_error_log += str(datetime.now()) + " " + str(e) + "\n"
+
+    def get_default_filecabinet_documents(self):
+        self.get_filecabinet_documents('undef')

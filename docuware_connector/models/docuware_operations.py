@@ -26,7 +26,6 @@ class DocuwareOperations(models.Model):
         credentials = {'user': self.env.user.company_id.docuware_user,
                        'password': self.env.user.company_id.docuware_pass}
         s = requests.Session()
-        print("DEBUG", s)
         s.headers.update({'User-Agent': 'welcome-letter'})
         s.headers.update({'Accept': 'application/json'})
         if c_path.exists():
@@ -46,9 +45,7 @@ class DocuwareOperations(models.Model):
             headers = {
                 'Content-Type': 'application/x-www-form-urlencoded',
             }
-            print("DEBUG", payload, "=", url)
             response = s.request('POST', url, headers=headers, data=payload, timeout=30)
-            print("DEBUG", response)
             if response.status_code == 401:
                 logging.info(
                     'Unable to log-in, this could also mean the user is rate limited, locked or user-agent missmatch.')
@@ -58,9 +55,7 @@ class DocuwareOperations(models.Model):
             return s
         return s
 
-
     def logout(self, c_path, s):
-        print("LOG OUT")
         url = f'{self.env.user.company_id.docuware_url}/docuware/platform/Account/Logoff'
         r = s.request('GET', url, timeout=30)
         r.raise_for_status()
