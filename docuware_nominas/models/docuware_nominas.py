@@ -25,9 +25,9 @@ class DocuwareNominas(models.Model):
     viafirma_id = fields.Many2one('viafirma', string='Viafirma')
 
     def get_signants(self):
-        if self.env.user.company_id.viafirma_fields:
+        if self.env.user.company_id.mandatory_field_ids:
             partners = []
-            for field in self.env.user.company_id.viafirma_fields:
+            for field in self.env.user.company_id.mandatory_field_ids:
                 doc_field = self.env['docuware.fields'].sudo().search(
                                 [('name', '=', field.name), ("document_id", "=", self.id)], limit=1)
                 if doc_field:
@@ -43,7 +43,7 @@ class DocuwareNominas(models.Model):
         if docid:
             try:
                 url = f'{self.env.user.company_id.docuware_url}/docuware/platform/FileCabinets/' \
-                           f'{self.env.user.company_id.docuware_cabinet_write_id.docuware_cabinet_guid}/' \
+                           f'{self.env.user.company_id.docuware_cabinet_read_id.docuware_cabinet_guid}/' \
                            f'Operations/ClippedDocuments?docId={self.docuware_document_guid}&operation=Clip'
 
                 s.headers.update({'Content-Type': 'application/json'})
@@ -67,7 +67,7 @@ class DocuwareNominas(models.Model):
         try:
             file_name = str(self.name) + "_signed"
             url = f'{self.env.user.company_id.docuware_url}/docuware/platform/FileCabinets/' \
-                  f'{self.env.user.company_id.docuware_cabinet_write_id.docuware_cabinet_guid}/Documents'
+                  f'{self.env.user.company_id.docuware_cabinet_read_id.docuware_cabinet_guid}/Documents'
 
             f = [
                 {

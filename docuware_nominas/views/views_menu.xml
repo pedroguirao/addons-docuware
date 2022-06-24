@@ -21,40 +21,40 @@
 
     </record>
 
-    <menuitem
+   <!-- <menuitem
             action="action_docuware_nominas"
             id="menu_nominas"
             name="Docuware Nóminas"
             sequence="10"
             web_icon="docuware_nominas,static/description/icon.png"
-    />
+    /> -->
 
     <record id="menu_docuware_nominas" model="ir.ui.menu">
         <field name="action" ref="action_docuware_nominas"/>
         <field name="active" eval="True"/>
         <field name="groups_id" eval="False"/>
         <field name="name">Nominas</field>
-        <field name="parent_id" ref="menu_nominas"/>
+        <field name="parent_id" ref="docuware_connector.menu_docuware"/>
         <field name="sequence">1</field>
         <field name="web_icon" eval="False"/>
     </record>
 
-    <record id="menu_operations" model="ir.ui.menu">
+    <!--<record id="menu_operations" model="ir.ui.menu">
         <field name="active" eval="True"/>
         <field name="groups_id" eval="[(4, ref('base.user_root'))]"/>
         <field name="name">Operations</field>
         <field name="parent_id" ref="menu_nominas"/>
         <field name="sequence">2</field>
         <field name="web_icon" eval="False"/>
-    </record>
+    </record> -->
 
      <record id="menu_docuware_nominas_sync" model="ir.ui.menu">
          <field name="action" ref="docuware_get_nominas"/>
         <field name="active" eval="True"/>
         <field name="groups_id" eval="False"/>
         <field name="name">Get Nominas</field>
-        <field name="parent_id" ref="menu_operations"/>
-        <field name="sequence">1</field>
+        <field name="parent_id" ref="docuware_connector.menu_docuware_operations"/>
+        <field name="sequence">2</field>
         <field name="web_icon" eval="False"/>
     </record>
 
@@ -63,8 +63,8 @@
         <field name="active" eval="True"/>
         <field name="groups_id" eval="False"/>
         <field name="name">Get Nominas Data</field>
-        <field name="parent_id" ref="menu_operations"/>
-        <field name="sequence">2</field>
+        <field name="parent_id" ref="docuware_connector.menu_docuware_operations"/>
+        <field name="sequence">3</field>
         <field name="web_icon" eval="False"/>
     </record>
 
@@ -73,8 +73,8 @@
         <field name="active" eval="True"/>
         <field name="groups_id" eval="False"/>
         <field name="name">Call Viafirma</field>
-        <field name="parent_id" ref="menu_operations"/>
-        <field name="sequence">3</field>
+        <field name="parent_id" ref="docuware_connector.menu_docuware_operations"/>
+        <field name="sequence">4</field>
         <field name="web_icon" eval="False"/>
     </record>
 
@@ -83,8 +83,8 @@
         <field name="active" eval="True"/>
         <field name="groups_id" eval="False"/>
         <field name="name">Get Signed Nominas</field>
-        <field name="parent_id" ref="menu_operations"/>
-        <field name="sequence">4</field>
+        <field name="parent_id" ref="docuware_connector.menu_docuware_operations"/>
+        <field name="sequence">5</field>
         <field name="web_icon" eval="False"/>
     </record>
 

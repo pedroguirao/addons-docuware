@@ -13,16 +13,16 @@
                         <group>
                             <group name="Docuware">
                                 <field name="docuware_cabinet_read_id" />
-                                <field name="docuware_cabinet_write_id" />
+                                <!--<field name="docuware_cabinet_write_id" />-->
                                 <field name="mandatory_field_ids"
                                        widget="many2many_tags" domain="[('document_id', '=', False)]"
                                        placeholder="NIF, VAT, CIF, ..."/>
                             </group>
                             <group name="Viafirma">
                                 <field name="viafirma_template" />
-                                <field name="viafirma_fields" widget="many2many_tags"
+                                <!--<field name="viafirma_fields" widget="many2many_tags"
                                        domain="[('document_id', '=', False)]"
-                                       placeholder="NIF, VAT, CIF, ..."/>
+                                       placeholder="NIF, VAT, CIF, ..."/>-->
                                 <field name="viafirma_notifications" widget="many2many_tags"/>
                             </group>
                         </group>

@@ -35,7 +35,7 @@
                         <field name="viafirma_id" />
                     </group>
                     <group name="upload_button">
-                        <button name="upload" string="Upload Document" type="object" class="oe_highlight oe_read_only"/>
+                        <button name="upload_and_clip" string="Upload Document" type="object" class="oe_highlight oe_read_only"/>
                     </group>
                     <group name="docuware_connection_info" position="after">
                         <notebook colspan="4">

@@ -63,14 +63,7 @@
             web_icon="docuware_connector,static/description/icon.png"
     />
 
-    <record id="menu_docuware_operations" model="ir.ui.menu">
-        <field name="active" eval="True"/>
-        <field name="groups_id" eval="False"/>
-        <field name="name">Operations</field>
-        <field name="parent_id" ref="menu_docuware_configuration"/>
-        <field name="sequence">2</field>
-        <field name="web_icon" eval="False"/>
-    </record>
+
 
     <!--<record id="menu_docuware_operations_apps" model="ir.ui.menu">
          <field name="action" ref="action_docuware_operations"/>
@@ -82,15 +75,7 @@
         <field name="web_icon" eval="False"/>
     </record>-->
 
-    <record id="menu_docuware_operations_sync" model="ir.ui.menu">
-         <field name="action" ref="docuware_sync_cabinets"/>
-        <field name="active" eval="True"/>
-        <field name="groups_id" eval="False"/>
-        <field name="name">Sync Directories</field>
-        <field name="parent_id" ref="menu_docuware_operations"/>
-        <field name="sequence">5</field>
-        <field name="web_icon" eval="False"/>
-    </record>
+
 
     <record id="menu_docuware_configuration" model="ir.ui.menu">
         <field name="active" eval="True"/>
@@ -102,7 +87,7 @@
     </record>
 
     <record id="menu_docuware_configuration_fields" model="ir.ui.menu">
-         <field name="action" ref="action_configuration_fields"/>
+        <field name="action" ref="action_configuration_fields"/>
         <field name="active" eval="True"/>
         <field name="groups_id" eval="False"/>
         <field name="name">Fields</field>
@@ -112,7 +97,7 @@
     </record>
 
     <record id="menu_docuware_cabinets" model="ir.ui.menu">
-         <field name="action" ref="action_docuware_cabinets"/>
+        <field name="action" ref="action_docuware_cabinets"/>
         <field name="active" eval="True"/>
         <field name="groups_id" eval="False"/>
         <field name="name">Directories</field>
@@ -121,6 +106,24 @@
         <field name="web_icon" eval="False"/>
     </record>
 
+    <record id="menu_docuware_operations" model="ir.ui.menu">
+        <field name="active" eval="True"/>
+        <field name="groups_id" eval="False"/>
+        <field name="name">Operations</field>
+        <field name="parent_id" ref="menu_docuware_configuration"/>
+        <field name="sequence">2</field>
+        <field name="web_icon" eval="False"/>
+    </record>
+
+    <record id="menu_docuware_operations_sync" model="ir.ui.menu">
+        <field name="action" ref="docuware_sync_cabinets"/>
+        <field name="active" eval="True"/>
+        <field name="groups_id" eval="False"/>
+        <field name="name">Sync Directories</field>
+        <field name="parent_id" ref="menu_docuware_operations"/>
+        <field name="sequence">1</field>
+        <field name="web_icon" eval="False"/>
+    </record>
 
 
 </odoo>
