@@ -15,7 +15,7 @@ from pathlib import Path
 
 
 class DocuwareNominas(models.Model):
-    _inherit = "docuware.documents"
+    _inherit = "docuware.document"
 
     name = fields.Char(string='Name')
     partner_ids = fields.Many2many('res.partner', string='Signants')
@@ -28,13 +28,26 @@ class DocuwareNominas(models.Model):
         if self.env.user.company_id.mandatory_field_ids:
             partners = []
             for field in self.env.user.company_id.mandatory_field_ids:
-                doc_field = self.env['docuware.fields'].sudo().search(
+                doc_field = self.env['docuware.value'].sudo().search(
                                 [('name', '=', field.name), ("document_id", "=", self.id)], limit=1)
                 if doc_field:
                     partner = self.env['res.partner'].sudo().search([('vat', '=', doc_field.value)], limit=1)
                     partners.append(partner.id)
             if partners:
                 self.write({'partner_ids': [(6, 0, partners)]})
+            return True
+        else:
+            return False
+
+    def get_signants_test(self):
+        print("GET SIGNANT TEST")
+        partners = []
+        for field in self.value_ids:
+            partner = field.get_value_field_relation()
+            if partner:
+                partners.append(partner.id)
+        if partners:
+            self.write({'partner_ids': [(6, 0, partners)]})
             return True
         else:
             return False
@@ -56,11 +69,11 @@ class DocuwareNominas(models.Model):
                 r = s.request('POST', url, data=index_json, timeout=30)
 
             except Exception as e:
-                if not self.docuware_document_error_log:
-                    self.docuware_document_error_log = str(datetime.now()) + " " + str(e) + "\n"
+                if not self.document_error_log:
+                    self.document_error_log = str(datetime.now()) + " " + str(e) + "\n"
                     return False
                 else:
-                    self.docuware_document_error_log += str(datetime.now()) + " " + str(e) + "\n"
+                    self.document_error_log += str(datetime.now()) + " " + str(e) + "\n"
                     return False
 
     def upload_and_clip(self, s):
@@ -105,11 +118,11 @@ class DocuwareNominas(models.Model):
                 return False
 
         except Exception as e:
-            if not self.docuware_document_error_log:
-                self.docuware_document_error_log = str(datetime.now()) + " " + str(e) + "\n"
+            if not self.document_error_log:
+                self.document_error_log = str(datetime.now()) + " " + str(e) + "\n"
                 return False
             else:
-                self.docuware_document_error_log += str(datetime.now()) + " " + str(e) + "\n"
+                self.document_error_log += str(datetime.now()) + " " + str(e) + "\n"
                 return False
 
 

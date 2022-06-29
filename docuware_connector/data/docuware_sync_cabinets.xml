@@ -2,7 +2,7 @@
 
     <record id="docuware_sync_cabinets" model="ir.actions.server">
         <field name="name">Sync Cabinets from Docuware</field>
-        <field name="model_id" ref="model_docuware_cabinets"/>
+        <field name="model_id" ref="model_docuware_cabinet"/>
         <field name="state">code</field>
         <field name="code">model.sync_cabinets()</field>
     </record>

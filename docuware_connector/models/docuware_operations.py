@@ -16,8 +16,8 @@ class DocuwareOperations(models.Model):
     _description = "Methods to connect , upload and download documents"
 
     name = fields.Char(string='Name')
-    docuware_cabinet_read_id = fields.Many2one('docuware.cabinets', string='Download Cabinet')
-    docuware_cabinet_write_id = fields.Many2one('docuware.cabinets', string='Upload Cabinet')
+    #cabinet_read_id = fields.Many2one('docuware.cabinets', string='Download Cabinet')
+    #cabinet_write_id = fields.Many2one('docuware.cabinets', string='Upload Cabinet')
     #field_ids = fields.One2many('docuware.fields','operation_id', string='Fields in Docs',
     #                            help="Mandatory fields to find defined in docuware to download the doc")
 

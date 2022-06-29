@@ -16,21 +16,21 @@ TYPES = [
     ('undef', 'Undefined'),
 ]
 
-class DocuwareDocuments(models.Model):
-    _name = "docuware.documents"
+class DocuwareDocument(models.Model):
+    _name = "docuware.document"
     _description = "Documents to work with Odoo and Apps"
 
     name = fields.Char(string='Name')
-    docuware_cabinet_id = fields.Many2one('docuware.cabinets', string='Cabinet')
+    cabinet_id = fields.Many2one('docuware.cabinet', string='Cabinet')
     #docuware_operations_id = fields.Many2one('docuware.operations', string='Operations')
-    docuware_document_guid = fields.Char(string='Cabinet Guid')
-    docuware_document_error_log = fields.Text(string="Error log")
+    document_guid = fields.Char(string='Cabinet Guid')
+    document_error_log = fields.Text(string="Error log")
 
-    docuware_operation_done = fields.Boolean("Operation Done")
+    operation_done = fields.Boolean("Operation Done")
 
-    docuware_json = fields.Text("Server Json")
-    docuware_binary = fields.Binary("Original")
-    field_ids = fields.One2many('docuware.fields', 'document_id', string='Fields')
+    json = fields.Text("Server Json")
+    binary = fields.Binary("Original")
+    value_ids = fields.One2many('docuware.value', 'document_id', string='Fields')
     document_type = fields.Selection(selection=TYPES, string='Document type')
 
     kanban_state = fields.Selection([
@@ -59,24 +59,24 @@ class DocuwareDocuments(models.Model):
 
     @api.depends('stage_id', 'kanban_state')
     def _compute_kanban_state_label(self):
-        for nomina in self:
-            if nomina.kanban_state == 'blocked':
-                nomina.kanban_state_label = nomina.legend_blocked
+        for doc in self:
+            if doc.kanban_state == 'blocked':
+                doc.kanban_state_label = doc.legend_blocked
             else:
-                nomina.kanban_state_label = nomina.legend_done
+                doc.kanban_state_label = doc.legend_done
 
     ### Show information sent by docuware about document, just for debug ###
     def get_document_data(self):
         c_path = Path('cookies.bin')
         credentials = {'user': self.env.user.company_id.docuware_user,
                        'password': self.env.user.company_id.docuware_pass}
-        s = self.docuware_cabinet_id.login(credentials, c_path)
+        s = self.cabinet_id.login(credentials, c_path)
 
         for document in self:
             try:
                 url = f'{self.env.user.company_id.docuware_url}' \
-                      f'/docuware/platform/FileCabinets/{document.docuware_cabinet_id.docuware_cabinet_guid}' \
-                      f'/Documents/{document.docuware_document_guid}'
+                      f'/docuware/platform/FileCabinets/{document.docuware_cabinet_id.cabinet_guid}' \
+                      f'/Documents/{document.document_guid}'
                 resp = s.request('GET', url)
 
                 if resp.status_code == 200:
@@ -87,11 +87,11 @@ class DocuwareDocuments(models.Model):
 
             except Exception as e:
                 if not document.docuware_document_error_log:
-                    document.docuware_document_error_log = str(datetime.now()) + " " + str(e) + "\n"
+                    document.document_error_log = str(datetime.now()) + " " + str(e) + "\n"
                 else:
-                    document.docuware_document_error_log += str(datetime.now()) + " " + str(e) + "\n"
+                    document.document_error_log += str(datetime.now()) + " " + str(e) + "\n"
 
-        self.docuware_cabinet_id.logout(c_path, s)
+        self.cabinet_id.logout(c_path, s)
 
     def generate_attachment(self, s, img_url):
         if img_url:
@@ -102,16 +102,16 @@ class DocuwareDocuments(models.Model):
                 return base64.b64encode(response.content)
         else:
             self.kanban_state_label = self.legend_blocked
-            if not self.docuware_document_error_log:
-                self.docuware_document_error_log = str(datetime.now()) + " " + "No document received" + "\n"
+            if not self.document_error_log:
+                self.document_error_log = str(datetime.now()) + " " + "No document received" + "\n"
             else:
-                self.docuware_document_error_log += str(datetime.now()) + " " + "No document received" + "\n"
+                self.document_error_log += str(datetime.now()) + " " + "No document received" + "\n"
 
     def get_document_data_from_operation(self, fields, s):
         try:
             url = f'{self.env.user.company_id.docuware_url}' \
-                  f'/docuware/platform/FileCabinets/{self.docuware_cabinet_id.docuware_cabinet_guid}' \
-                  f'/Documents/{self.docuware_document_guid}'
+                  f'/docuware/platform/FileCabinets/{self.cabinet_id.cabinet_guid}' \
+                  f'/Documents/{self.document_guid}'
             resp = s.request('GET', url)
 
             if resp.status_code == 200:
@@ -123,20 +123,23 @@ class DocuwareDocuments(models.Model):
                     print(res['Links'][j]['rel'])
                     if res['Links'][j]['rel'] == "fileDownload":
                         fdownload = res['Links'][j]['href']
-                self.docuware_json = res
+                self.json = res
 
                 for f in fields:
                     for i in range(len(res['Fields'])):
                         if res['Fields'][i]['FieldName'] == f.name:
                             mandatory.append(f.name)
-                            exist_field = self.env['docuware.fields'].sudo().search(
+                            exist_field = self.env['docuware.value'].sudo().search(
                                 [('name', '=', res['Fields'][i]['FieldName']), ("document_id", "=", self.id)], limit=1)
                             if not exist_field:
-                                self.env['docuware.fields'].create(
-                                    {'name': res['Fields'][i]['FieldName'], 'value': res['Fields'][i]['Item'],
-                                     'document_id': self.id})
+                                self.env['docuware.value'].create(
+                                    {'name': res['Fields'][i]['FieldName'],
+                                     'value': res['Fields'][i]['Item'],
+                                     'document_id': self.id,
+                                     'odoo_field_id': f.odoo_field_id,
+                                     })
                 if len(mandatory) == len(fields):
-                    self.docuware_binary = self.generate_attachment(s, fdownload)
+                    self.binary = self.generate_attachment(s, fdownload)
                     return True
                 else:
                     self.kanban_state_label = self.legend_blocked

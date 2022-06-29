@@ -26,9 +26,9 @@
                     </h2>
                     <group name="basic_params" col="4">
                         <field name="docuware_nomina_done"/>
-                        <field name="docuware_binary"/>
-                        <field name="docuware_cabinet_id"/>
-                        <field name="docuware_document_guid"/>
+                        <field name="binary"/>
+                        <field name="cabinet_id"/>
+                        <field name="document_guid"/>
                     </group>
                     <group name="basic_fields" col="2">
                         <field name="partner_ids" widget="many2many_tags"/>
@@ -41,12 +41,12 @@
                         <notebook colspan="4">
                             <page string="Log" name="log">
                                 <group name="docuware_log" col="4">
-                                    <field name="docuware_document_error_log"/>
+                                    <field name="document_error_log"/>
                                 </group>
                             </page>
                             <page string="Json" name="json">
                                 <group name="docuware_json" col="4">
-                                    <field name="docuware_json"/>
+                                    <field name="json"/>
                                 </group>
                             </page>
                         </notebook>
@@ -80,7 +80,7 @@
         <field name="inherit_id" eval="False"/>
         <field name="key" eval="False"/>
         <field name="mode">primary</field>
-        <field name="model">docuware.documents</field>
+        <field name="model">docuware.document</field>
         <field name="name">Default form view for Docuware Nominas</field>
         <field name="priority">16</field>
         <field name="type">form</field>
@@ -100,7 +100,7 @@
         <field name="inherit_id" eval="False"/>
         <field name="key" eval="False"/>
         <field name="mode">primary</field>
-        <field name="model">docuware.documents</field>
+        <field name="model">docuware.document</field>
         <field name="name">Default tree view for Docuware Documents</field>
         <field name="priority">16</field>
         <field name="type">tree</field>
@@ -160,9 +160,9 @@
                                              <span style="font-weight:bold;" class="fa fa-fw mt4 fa-frown-o text-danger" t-if="record.rating_last_value.value == 1" title="Latest Rating: Higly Dissatisfied" role="img" aria-label="Sad face"/>
                                          </b>-->
                                     </div>
-                                    <div class="oe_kanban_bottom_right" t-if="!selection_mode">
-                                         <field name="kanban_state" widget="state_selection" groups="base.group_user"/>
-                                         <!--<field name="user_id" widget="many2one_avatar_user"/>-->
+                                    <div class="oe_kanban_bottom_right">
+                                        <field name="kanban_state" groups="base.group_user"/>
+                                        <!--<field name="user_id" widget="many2one_avatar_user"/>-->
                                     </div>
                                 </div>
                             </div>
@@ -177,10 +177,32 @@
         <field name="inherit_id" eval="False"/>
         <field name="key" eval="False"/>
         <field name="mode">primary</field>
-        <field name="model">docuware.documents</field>
+        <field name="model">docuware.document</field>
         <field name="name">Default form view for Docuware documents</field>
         <field name="priority">16</field>
         <field name="type">kanban</field>
+    </record>
+
+    <record id="view_docuware_cabinet" model="ir.ui.view">
+        <field name="name">Docuware cabinet configuration</field>
+        <field name="model">docuware.cabinet</field>
+        <field name="type">form</field>
+        <field name="inherit_id" ref="docuware_connector.docuware_cabinet_form"/>
+        <field name="arch" type="xml">
+            <group name="cabinet_type" position="after">
+                <group attrs="{'invisible':[('cabinet_type', 'not in', ('nominas'))]}">
+                    <group name="Docuware_nominas">
+                        <field name="mandatory_field_ids"
+                               widget="many2many_tags"
+                               placeholder="NIF, VAT, CIF, ..."/>
+                    </group>
+                    <group name="Viafirma">
+                        <field name="viafirma_template" />
+                        <field name="viafirma_notifications" widget="many2many_tags"/>
+                    </group>
+                </group>
+            </group>
+        </field>
     </record>
 
 </odoo>

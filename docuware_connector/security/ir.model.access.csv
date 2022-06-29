@@ -1,6 +1,7 @@
 id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
-access_docuware_cabinets, Docuware Cabinets,model_docuware_cabinets,base.group_user,1,1,1,1
+access_docuware_cabinet, Docuware Cabinet,model_docuware_cabinet,base.group_user,1,1,1,1
 access_docuware_operations, Docuware Operations,model_docuware_operations,base.group_user,1,1,1,1
-access_docuware_documents, Docuware documents,model_docuware_documents,base.group_user,1,1,1,1
-access_docuware_fields, Docuware fields,model_docuware_fields,base.group_user,1,1,1,1
+access_docuware_document, Docuware document,model_docuware_document,base.group_user,1,1,1,1
+access_docuware_dictionary, Docuware dictionary,model_docuware_dictionary,base.group_user,1,1,1,1
+access_docuware_value, Docuware value,model_docuware_value,base.group_user,1,1,1,1
 access_docuware_stage, Docuware Stage,model_docuware_stage,base.group_user,1,1,1,1

@@ -4,6 +4,7 @@
 #    Copyright (C) 2021 Serincloud S.L. All Rights Reserved
 #    PedroGuirao pedro@serincloud.com
 ##############################################################################
+
 from odoo import api, fields, models, _
 import pickle, logging, json
 import requests
@@ -12,15 +13,25 @@ from pathlib import Path
 from datetime import datetime, timedelta
 from odoo.exceptions import AccessError, UserError, RedirectWarning, ValidationError, Warning
 
-class DocuwareCabinets(models.Model):
-    _name = "docuware.cabinets"
+TYPES = [
+]
+
+
+class DocuwareCabinet(models.Model):
+    _name = "docuware.cabinet"
     _description = "Cabinets to connect with Odoo and Apps"
 
-    name = fields.Char(string='Name')
-    docuware_cabinet = fields.Char(string='Cabinet')
-    docuware_cabinet_guid = fields.Char(string='Cabinet Guid')
-    docuware_cabinet_document_ids = fields.One2many('docuware.documents','docuware_cabinet_id', string='Documents')
-    docuware_cabinet_error_log = fields.Text(string='Error log')
+    #name = fields.Char(string='Name')
+    cabinet_type = fields.Selection(
+        selection=TYPES,
+    )
+
+    name = fields.Char(string='Cabinet')
+    cabinet_guid = fields.Char(string='Cabinet Guid')
+    cabinet_document_ids = fields.One2many('docuware.document','cabinet_id', string='Documents')
+    cabinet_error_log = fields.Text(string='Error log')
+
+    user_ids = fields.Many2many('res.users', string='Users')
 
     def login(self, c_path):
         # Session will hold the cookies
@@ -82,7 +93,6 @@ class DocuwareCabinets(models.Model):
     #    return r.json()
 
     def logout(self, c_path, s):
-        print("LOG OUT")
         url = f'{self.env.user.company_id.docuware_url}/docuware/platform/Account/Logoff'
         r = s.request('GET', url, timeout=30)
         r.raise_for_status()
@@ -91,6 +101,7 @@ class DocuwareCabinets(models.Model):
     def get_orgid(self, s):
         url = f'{self.env.user.company_id.docuware_url}/docuware/platform/Organizations'
         resp = s.request('GET', url)
+        print('RESP', resp)
         if resp.status_code == 200:
             return json.loads(resp.content.decode('utf-8'))
 
@@ -105,31 +116,36 @@ class DocuwareCabinets(models.Model):
         try:
             c_path = Path('cookies.bin')
             s = self.login(c_path)
+            print("HACE LOGIN")
             res = self.get_orgid(s)
-
+            print("GET ORGID")
             if res:
                 for i in range(len(res['Organization'])):
                     if res['Organization'][i]['Name'] == self.env.user.company_id.docuware_organization:
+                        print("DEBUG",res['Organization'][i]['Name'])
                         orgid = res['Organization'][i]['Guid']
                 if orgid:
+                    print("IF ORGID")
                     filecabinets = self.get_all_filecabinets(s, orgid)
                     if filecabinets:
-                        docuware_cabinets = self.env['docuware.cabinets'].search([])
+                        print("IF FILECABINETS")
+                        docuware_cabinets = self.env['docuware.cabinet'].search([])
                         odoo_cabinets = []
                         for cabinet in docuware_cabinets:
-                            odoo_cabinets.append(cabinet.docuware_cabinet)
+                            odoo_cabinets.append(cabinet.name)
                         for j in range(len(filecabinets['FileCabinet'])):
                             if filecabinets['FileCabinet'][j]['Name'] not in odoo_cabinets:
-                                new_cabinet = self.env['docuware.cabinets'].create({
+                                new_cabinet = self.env['docuware.cabinet'].create({
                                     'name': filecabinets['FileCabinet'][j]['Name'],
-                                    'docuware_cabinet': filecabinets['FileCabinet'][j]['Name'],
-                                    'docuware_cabinet_guid': filecabinets['FileCabinet'][j]['Id'],
+                                    'cabinet_guid': filecabinets['FileCabinet'][j]['Id'],
                                 })
 
             self.logout(c_path, s)
 
+
+
         except Exception as e:
-            raise UserError("Failed to connect to Docuware Server , please try again later")
+            raise UserError("Failed to connect to Docuware Server , please try again later" + str(e))
 
     def get_filecabinet_documents(self, type):
         if not type:
@@ -139,34 +155,34 @@ class DocuwareCabinets(models.Model):
             s = self.login(c_path)
 
             print("GET CABINET INFO")
-            url = f'{self.env.user.company_id.docuware_url}/docuware/platform/FileCabinets/{self.docuware_cabinet_guid}/Documents'
+            url = f'{self.env.user.company_id.docuware_url}/docuware/platform/FileCabinets/{self.cabinet_guid}/Documents'
             resp = s.request('GET', url)
             if resp.status_code == 200:
                 # return json.loads(resp.content.decode('utf-8'))
                 res = json.loads(resp.content.decode('utf-8'))
-                docuware_documents = self.env['docuware.documents'].search([('docuware_cabinet_id', '=', self.id)])
+                docuware_documents = self.env['docuware.document'].search([('cabinet_id', '=', self.id)])
                 odoo_documents = []
                 for document in docuware_documents:
                     odoo_documents.append(document.name)
                 for i in range(len(res['Items'])):
                     print("ITEMS", res['Items'][i]['Title'])
                     if res['Items'][i]['Title'] not in odoo_documents:
-                        new_document = self.env['docuware.documents'].create({
+                        new_document = self.env['docuware.document'].create({
                             'name': res['Items'][i]['Title'],
-                            'docuware_cabinet_id': self.id,
+                            'cabinet_id': self.id,
                             'document_type': type,
                             #'docuware_cabinet_guid': filecabinets['FileCabinet'][j]['Id'],
                         })
                         for j in range(len(res['Items'][i]['Fields'])):
                             if res['Items'][i]['Fields'][j]['FieldName'] == 'DWDOCID':
-                                new_document.docuware_document_guid = res['Items'][i]['Fields'][j]['Item']
+                                new_document.document_guid = res['Items'][i]['Fields'][j]['Item']
 
             self.logout(c_path, s)
         except Exception as e:
-            if not self.docuware_cabinet_error_log:
-                self.docuware_cabinet_error_log = str(datetime.now()) + " " + str(e) + "\n"
+            if not self.cabinet_error_log:
+                self.cabinet_error_log = str(datetime.now()) + " " + str(e) + "\n"
             else:
-                self.docuware_cabinet_error_log += str(datetime.now()) + " " + str(e) + "\n"
+                self.cabinet_error_log += str(datetime.now()) + " " + str(e) + "\n"
 
     def get_default_filecabinet_documents(self):
         self.get_filecabinet_documents('undef')

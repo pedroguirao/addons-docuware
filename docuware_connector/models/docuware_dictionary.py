@@ -7,16 +7,15 @@
 from odoo import api, fields, models, _
 import pickle, logging, json
 import requests
-from datetime import datetime
-import base64
 from requests.structures import CaseInsensitiveDict
 from pathlib import Path
 
 
-class DocuwareOperations(models.Model):
-    _inherit = "docuware.operations"
+class DocuwareDictionary(models.Model):
+    _name = "docuware.dictionary"
+    _description = "Fields to sync by document type"
 
-
-
-
-
+    name = fields.Char(string='Name')
+    cabinet_id = fields.Many2one('docuware.cabinet', string='Cabinet')
+    odoo_field_id = fields.Char(string='Odoo Field')
+    required = fields.Boolean(string="Required")

@@ -14,11 +14,23 @@ TYPES = [
 
 ]
 
-class DocuwareFields(models.Model):
-    _name = "docuware.fields"
+class DocuwareValues(models.Model):
+    _name = "docuware.value"
     _description = "Fields to sync by document type"
 
     name = fields.Char(string='Name')
-    company_id = fields.Many2one('res.company', string='Operation')
-    document_id = fields.Many2one('docuware.documents', string='Document')
+    document_id = fields.Many2one('docuware.document', string='Document')
+    odoo_field_id = fields.Char(string='Odoo Field')
+    required = fields.Boolean(string="Required")
     value = fields.Char(string='Value')
+
+    def get_value_field_relation(self):
+        keys = self.odoo_field_id.split(",")
+        print("VALUES", keys)
+        if keys:
+            object = self.env[keys[0]].sudo().search([(keys[1], '=', self.value)], limit=1)
+            print(object)
+            if object:
+                return object
+            else:
+                return False
