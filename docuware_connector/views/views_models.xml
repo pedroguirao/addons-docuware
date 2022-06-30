@@ -132,9 +132,6 @@
                                 <tree>
                                     <field name="name"/>
                                     <field name="email"/>
-                                    <!--
-                                    <field name="department_id" />
-                                    -->
                                 </tree>
                             </field>
                         </page>
