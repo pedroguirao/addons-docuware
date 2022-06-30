@@ -77,7 +77,6 @@
         <field name="active" eval="True"/>
         <field name="arch" type="xml">
             <tree >
-                <!--<field name="name"/>-->
                 <field name="name"/>
                 <field name="type"/>
                 <field name="write_date"/>
@@ -132,9 +131,9 @@
                             <field name="user_ids"/>
                         </page>
                         <page name="technical" string="Technical" groups="base.group_system">
+                            <button name="get_default_filecabinet_documents" string="Get Documents" type="object" class="oe_highlight oe_read_only"/>
                             <group name="cabinet_technical">
                                 <field name="guid"/>
-                                <button name="get_default_filecabinet_documents" string="Get Documents" type="object" class="oe_highlight oe_read_only"/>
                                 <field name="cabinet_error_log"/>
                             </group>
                         </page>
