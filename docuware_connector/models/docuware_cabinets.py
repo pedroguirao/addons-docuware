@@ -22,16 +22,23 @@ class DocuwareCabinet(models.Model):
     _description = "Cabinets to connect with Odoo and Apps"
 
     #name = fields.Char(string='Name')
-    cabinet_type = fields.Selection(
+    type = fields.Selection(
         selection=TYPES,
     )
 
     name = fields.Char(string='Cabinet')
-    cabinet_guid = fields.Char(string='Cabinet Guid')
-    cabinet_document_ids = fields.One2many('docuware.document','cabinet_id', string='Documents')
+    guid = fields.Char(string='Cabinet Guid')
+    #cabinet_document_ids = fields.One2many('docuware.document','cabinet_id', string='Documents')
+    #REVISAR
     cabinet_error_log = fields.Text(string='Error log')
 
     user_ids = fields.Many2many('res.users', string='Users')
+
+    document_count = fields.Integer(string='Docs', compute='get_docs_count')
+
+    def get_docs_count(self):
+        docs = self.env['docuware.document'].search([('cabinet_id', '=', self.id)])
+        self.document_count = docs
 
     def login(self, c_path):
         # Session will hold the cookies
@@ -64,7 +71,7 @@ class DocuwareCabinet(models.Model):
                 logging.info(
                     'Unable to log-in, this could also mean the user is rate limited, locked or user-agent missmatch.')
             response.raise_for_status()
-            with open('cookies.bin', mode='wb') as f:
+            with open('/opt/odoo14/.local/share/Odoo/cookies.bin', mode='wb') as f:
                 pickle.dump(s.cookies, f)
             return s
         return s
@@ -114,7 +121,7 @@ class DocuwareCabinet(models.Model):
     @api.model
     def sync_cabinets(self):
         try:
-            c_path = Path('cookies.bin')
+            c_path = Path('/opt/odoo14/.local/share/Odoo/cookies.bin')
             s = self.login(c_path)
             print("HACE LOGIN")
             res = self.get_orgid(s)
@@ -137,7 +144,7 @@ class DocuwareCabinet(models.Model):
                             if filecabinets['FileCabinet'][j]['Name'] not in odoo_cabinets:
                                 new_cabinet = self.env['docuware.cabinet'].create({
                                     'name': filecabinets['FileCabinet'][j]['Name'],
-                                    'cabinet_guid': filecabinets['FileCabinet'][j]['Id'],
+                                    'guid': filecabinets['FileCabinet'][j]['Id'],
                                 })
 
             self.logout(c_path, s)
@@ -151,11 +158,11 @@ class DocuwareCabinet(models.Model):
         if not type:
             type = 'undef'
         try:
-            c_path = Path('cookies.bin')
+            c_path = Path('/opt/odoo14/.local/share/Odoo/cookies.bin')
             s = self.login(c_path)
 
             print("GET CABINET INFO")
-            url = f'{self.env.user.company_id.docuware_url}/docuware/platform/FileCabinets/{self.cabinet_guid}/Documents'
+            url = f'{self.env.user.company_id.docuware_url}/docuware/platform/FileCabinets/{self.guid}/Documents'
             resp = s.request('GET', url)
             if resp.status_code == 200:
                 # return json.loads(resp.content.decode('utf-8'))

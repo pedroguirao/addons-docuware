@@ -1,77 +1,6 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <odoo>
 
-    <record id="docuware_cabinets_tree" model="ir.ui.view">
-        <field name="active" eval="True"/>
-        <field name="arch" type="xml">
-            <tree >
-                <!--<field name="name"/>-->
-                <field name="name"/>
-                <field name="cabinet_type"/>
-                <field name="write_date"/>
-            </tree>
-        </field>
-        <field name="field_parent" eval="False"/>
-        <field name="groups_id" eval="[(6, 0, [])]"/>
-        <field name="inherit_id" eval="False"/>
-        <field name="key" eval="False"/>
-        <field name="mode">primary</field>
-        <field name="model">docuware.cabinet</field>
-        <field name="name">Default tree view for Docuware Cabinets</field>
-        <field name="priority">16</field>
-        <field name="type">tree</field>
-    </record>
-
-    <record id="docuware_cabinet_form" model="ir.ui.view">
-        <field name="active" eval="True"/>
-        <field name="arch" type="xml">
-            <form>
-                <sheet string="Cabinet">
-                    <h1>
-                        <field name="name"/>
-                    </h1>
-                    <group name="cabinet_type">
-                        <field name="cabinet_type" />
-                        <field name="user_ids" widget="many2many_tags"/>
-                    </group>
-                    <group groups="base.group_system">
-                        <button name="get_default_filecabinet_documents" string="Get Documents" type="object" class="oe_highlight oe_read_only"/>
-                    </group>
-                    <notebook>
-                        <page name="documents" string="Documents" groups="base.group_system">
-                            <group name="documents" col="4">
-                                <field name="cabinet_document_ids">
-                                    <tree name="documents_in_cabinet" string="Documents" create="false">
-                                        <field name="name"/>
-                                        <field name="operation_done"/>
-                                        <field name="binary" widget="binary"/>
-                                        <button name="get_document_data" string="Get Document" type="object" icon="fa-share-square-o"/>
-                                    </tree>
-                                </field>
-                            </group>
-                        </page>
-                        <page name="technical" string="Technical" groups="base.group_system">
-                            <group name="documents">
-                                <field name="cabinet_guid"/>
-                                <field name="cabinet_error_log"/>
-                            </group>
-                        </page>
-                    </notebook>
-
-                </sheet>
-            </form>
-        </field>
-        <field name="field_parent" eval="False"/>
-        <field name="groups_id" eval="[(6, 0, [])]"/>
-        <field name="inherit_id" eval="False"/>
-        <field name="key" eval="False"/>
-        <field name="mode">primary</field>
-        <field name="model">docuware.cabinet</field>
-        <field name="name">Default form view for Docuware Cabinets</field>
-        <field name="priority">16</field>
-        <field name="type">form</field>
-    </record>
-
     <record id="docuware_document_form" model="ir.ui.view">
         <field name="active" eval="True"/>
         <field name="arch" type="xml">
@@ -126,6 +55,118 @@
         <field name="type">form</field>
     </record>
 
+    <record id="docuware_document_tree" model="ir.ui.view">
+        <field name="active" eval="True"/>
+        <field name="arch" type="xml">
+            <tree >
+                <field name="name" />
+            </tree>
+        </field>
+        <field name="field_parent" eval="False"/>
+        <field name="groups_id" eval="[(6, 0, [])]"/>
+        <field name="inherit_id" eval="False"/>
+        <field name="key" eval="False"/>
+        <field name="mode">primary</field>
+        <field name="model">docuware.document</field>
+        <field name="name">Default tree view for Docuware Docs</field>
+        <field name="priority">16</field>
+        <field name="type">tree</field>
+    </record>
+
+    <record id="docuware_cabinets_tree" model="ir.ui.view">
+        <field name="active" eval="True"/>
+        <field name="arch" type="xml">
+            <tree >
+                <!--<field name="name"/>-->
+                <field name="name"/>
+                <field name="type"/>
+                <field name="write_date"/>
+            </tree>
+        </field>
+        <field name="field_parent" eval="False"/>
+        <field name="groups_id" eval="[(6, 0, [])]"/>
+        <field name="inherit_id" eval="False"/>
+        <field name="key" eval="False"/>
+        <field name="mode">primary</field>
+        <field name="model">docuware.cabinet</field>
+        <field name="name">Default tree view for Docuware Cabinets</field>
+        <field name="priority">16</field>
+        <field name="type">tree</field>
+    </record>
+
+    <record id="action_view_cabinet_docs" model="ir.actions.act_window">
+        <field name="binding_model_id" eval="False"/>
+        <field name="binding_type">action</field>
+        <field name="context">{'search_default_cabinet_id': active_id,'default_cabinet_id': active_id}</field>
+        <field name="domain">[('cabinet_id', '=',active_id)]</field>
+        <field name="groups_id" eval="[(6, 0, [])]"/>
+        <field name="help"><![CDATA[<p> Docs in Cabinet </p>]]></field>
+        <field name="limit">80</field>
+        <field name="name">Documents</field>
+        <field name="res_model">docuware.document</field>
+        <field name="target">current</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="view_id" ref="docuware_document_tree"/>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+    <record id="docuware_cabinet_form" model="ir.ui.view">
+        <field name="active" eval="True"/>
+        <field name="arch" type="xml">
+            <form>
+                <sheet string="Cabinet">
+                    <div class="oe_button_box" name="button_box">
+                        <button class="oe_stat_button" type="action" name="%(docuware_connector.action_view_cabinet_docs)d" icon="fa-usd">
+                            <field string="Docs" name="document_count" widget="statinfo"/>
+                        </button>
+                    </div>
+                    <h1>
+                        <field name="name"/>
+                    </h1>
+                    <group name="type">
+                        <field name="type" />
+                        <field name="user_ids" widget="many2many_tags"/>
+                    </group>
+                    <group groups="base.group_system">
+                        <button name="get_default_filecabinet_documents" string="Get Documents" type="object" class="oe_highlight oe_read_only"/>
+                    </group>
+                    <notebook>
+                        <!--<page name="documents" string="Documents" groups="base.group_system">
+                            <group name="documents" col="4">
+                                <field name="cabinet_document_ids">
+                                    <tree name="documents_in_cabinet" string="Documents" create="false">
+                                        <field name="name"/>
+                                        <field name="operation_done"/>
+                                        <field name="binary" widget="binary"/>
+                                        <button name="get_document_data" string="Get Document" type="object" icon="fa-share-square-o"/>
+                                    </tree>
+                                </field>
+                            </group>
+                        </page>-->
+                        <page name="technical" string="Technical" groups="base.group_system">
+                            <group name="documents">
+                                <field name="guid"/>
+                                <field name="cabinet_error_log"/>
+                            </group>
+                        </page>
+                    </notebook>
+
+                </sheet>
+            </form>
+        </field>
+        <field name="field_parent" eval="False"/>
+        <field name="groups_id" eval="[(6, 0, [])]"/>
+        <field name="inherit_id" eval="False"/>
+        <field name="key" eval="False"/>
+        <field name="mode">primary</field>
+        <field name="model">docuware.cabinet</field>
+        <field name="name">Default form view for Docuware Cabinets</field>
+        <field name="priority">16</field>
+        <field name="type">form</field>
+    </record>
+
+
+
     <record id="docuware_dictionary_form" model="ir.ui.view">
         <field name="active" eval="True"/>
         <field name="arch" type="xml">
@@ -168,5 +209,6 @@
         <field name="priority">16</field>
         <field name="type">tree</field>
     </record>
+
 
 </odoo>

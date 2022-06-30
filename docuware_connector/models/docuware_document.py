@@ -67,7 +67,7 @@ class DocuwareDocument(models.Model):
 
     ### Show information sent by docuware about document, just for debug ###
     def get_document_data(self):
-        c_path = Path('cookies.bin')
+        c_path = Path('/opt/odoo14/.local/share/Odoo/cookies.bin')
         credentials = {'user': self.env.user.company_id.docuware_user,
                        'password': self.env.user.company_id.docuware_pass}
         s = self.cabinet_id.login(credentials, c_path)
@@ -75,7 +75,7 @@ class DocuwareDocument(models.Model):
         for document in self:
             try:
                 url = f'{self.env.user.company_id.docuware_url}' \
-                      f'/docuware/platform/FileCabinets/{document.docuware_cabinet_id.cabinet_guid}' \
+                      f'/docuware/platform/FileCabinets/{document.docuware_cabinet_id.guid}' \
                       f'/Documents/{document.document_guid}'
                 resp = s.request('GET', url)
 
@@ -110,7 +110,7 @@ class DocuwareDocument(models.Model):
     def get_document_data_from_operation(self, fields, s):
         try:
             url = f'{self.env.user.company_id.docuware_url}' \
-                  f'/docuware/platform/FileCabinets/{self.cabinet_id.cabinet_guid}' \
+                  f'/docuware/platform/FileCabinets/{self.cabinet_id.guid}' \
                   f'/Documents/{self.document_guid}'
             resp = s.request('GET', url)
 

@@ -56,7 +56,7 @@ class DocuwareNominas(models.Model):
         if docid:
             try:
                 url = f'{self.env.user.company_id.docuware_url}/docuware/platform/FileCabinets/' \
-                           f'{self.env.user.company_id.docuware_cabinet_read_id.docuware_cabinet_guid}/' \
+                           f'{self.env.user.company_id.docuware_cabinet_read_id.guid}/' \
                            f'Operations/ClippedDocuments?docId={self.docuware_document_guid}&operation=Clip'
 
                 s.headers.update({'Content-Type': 'application/json'})
@@ -80,7 +80,7 @@ class DocuwareNominas(models.Model):
         try:
             file_name = str(self.name) + "_signed"
             url = f'{self.env.user.company_id.docuware_url}/docuware/platform/FileCabinets/' \
-                  f'{self.env.user.company_id.docuware_cabinet_read_id.docuware_cabinet_guid}/Documents'
+                  f'{self.env.user.company_id.docuware_cabinet_read_id.guid}/Documents'
 
             f = [
                 {

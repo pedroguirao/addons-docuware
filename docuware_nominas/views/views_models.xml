@@ -189,8 +189,8 @@
         <field name="type">form</field>
         <field name="inherit_id" ref="docuware_connector.docuware_cabinet_form"/>
         <field name="arch" type="xml">
-            <group name="cabinet_type" position="after">
-                <group attrs="{'invisible':[('cabinet_type', 'not in', ('nominas'))]}">
+            <group name="type" position="after">
+                <group attrs="{'invisible':[('type', 'not in', ('nominas'))]}">
                     <group name="Docuware_nominas">
                         <field name="dictionary_id"/>
                     </group>

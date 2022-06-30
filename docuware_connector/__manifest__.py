@@ -19,8 +19,8 @@
     "data": [
         'security/ir.model.access.csv',
         'data/docuware_sync_cabinets.xml',
-        'views/views_menu.xml',
         'views/views_models.xml',
+        'views/views_menu.xml',
         'views/res_company_views.xml',
     ],
     "installable": True,
