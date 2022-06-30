@@ -125,7 +125,7 @@
                     </h1>
                     <group name="type">
                         <field name="type" />
-                        <field name="dictionary_id" attrs="{'invisible':[('type','=',False)]}"/>
+                        <field name="dictionary_id" attrs="{'readonly':[('type','=',False)]}"/>
                         <field name="user_ids"/>
                     </group>
                     <div name="technical" string="Technical operations" groups="base.group_system">
