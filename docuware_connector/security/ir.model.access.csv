@@ -4,4 +4,6 @@ access_docuware_operations, Docuware Operations,model_docuware_operations,base.g
 access_docuware_document, Docuware document,model_docuware_document,base.group_user,1,1,1,1
 access_docuware_dictionary, Docuware dictionary,model_docuware_dictionary,base.group_user,1,1,1,1
 access_docuware_value, Docuware value,model_docuware_value,base.group_user,1,1,1,1
-access_docuware_stage, Docuware Stage,model_docuware_stage,base.group_user,1,1,1,1
+access_docuware_stage, Docuware Stage,model_docuware_stage,base.group_system,1,1,1,1
+access_docuware_stage, Docuware Stage,model_docuware_stage,base.group_user,1,0,0,0
+access_docuware_dictionary_line, Docuware dictionary_line,model_docuware_dictionary_line,base.group_user,1,1,1,1

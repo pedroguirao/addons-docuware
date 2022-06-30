@@ -192,9 +192,7 @@
             <group name="cabinet_type" position="after">
                 <group attrs="{'invisible':[('cabinet_type', 'not in', ('nominas'))]}">
                     <group name="Docuware_nominas">
-                        <field name="mandatory_field_ids"
-                               widget="many2many_tags"
-                               placeholder="NIF, VAT, CIF, ..."/>
+                        <field name="dictionary_id"/>
                     </group>
                     <group name="Viafirma">
                         <field name="viafirma_template" />

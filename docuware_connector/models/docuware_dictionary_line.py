@@ -11,9 +11,11 @@ from requests.structures import CaseInsensitiveDict
 from pathlib import Path
 
 
-class DocuwareDictionary(models.Model):
-    _name = "docuware.dictionary"
-    _description = "Fields to sync by document type"
+class DocuwareDictionaryLine(models.Model):
+    _name = "docuware.dictionary.line"
+    _description = "Lines for document type"
 
     name = fields.Char(string='Name')
-    line_ids = fields.One2many('docuware.dictionary.line', 'dictionary_id',  string='Lines')
+    odoo_field_id = fields.Char(string='Odoo Field')
+    required = fields.Boolean(string="Required")
+    dictionary_id = fields.Many2one('docuware.dictionary', string='Dictionary')

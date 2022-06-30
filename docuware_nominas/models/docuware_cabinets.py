@@ -18,9 +18,8 @@ class DocuwareCabinets(models.Model):
     _inherit = "docuware.cabinet"
 
     cabinet_type = fields.Selection(selection_add=[('nominas', 'Nóminas')], ondelete={"nominas": "set null"})
-    mandatory_field_ids = fields.One2many('docuware.dictionary', 'cabinet_id', string='Mandatory Fields',
-                                          help="Mandatory fields to find defined in docuware to download the doc")
-
+    dictionary_id = fields.Many2one('docuware.dictionary', string='Dictionary')
+    # se llamaba mandatory_field_ids
     viafirma_template = fields.Many2one('viafirma.templates', string='Viafirma Template')
     viafirma_notifications = fields.Many2many(
         comodel_name="viafirma.notification",
@@ -37,6 +36,7 @@ class DocuwareCabinets(models.Model):
     @api.model
     def get_nominas_data(self):
         c_path = Path('cookies.bin')
+        print("DEBUG", c_path)
         s = self.login(c_path)
         cabinets = self.env['docuware.cabinet'].search([('cabinet_type', '=', 'nominas')])
         for cabinet in cabinets:

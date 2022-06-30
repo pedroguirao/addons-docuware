@@ -9,5 +9,6 @@ from . import res_company
 from . import docuware_cabinets
 from . import docuware_document
 from . import docuware_dictionary
+from . import docuware_dictionary_line
 from . import docuware_value
 from . import docuware_stage

@@ -14,7 +14,7 @@
                             <group name="Docuware">
                                 <field name="docuware_cabinet_read_id" />
                                 <!--<field name="docuware_cabinet_write_id" />-->
-                                <field name="mandatory_field_ids"
+                                <field name="dictionary_id"
                                        widget="many2many_tags" domain="[('document_id', '=', False)]"
                                        placeholder="NIF, VAT, CIF, ..."/>
                             </group>

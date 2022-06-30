@@ -135,9 +135,7 @@
                 <sheet string="Fields">
                     <group name="basic_params" col="4">
                         <field name="name" />
-                        <field name="cabinet_id" />
-                        <field name="odoo_field_id" />
-                        <field name="required" />
+                        <field name="line_ids" />
                     </group>
                 </sheet>
 
@@ -159,9 +157,7 @@
         <field name="arch" type="xml">
             <tree >
                 <field name="name" />
-                <field name="cabinet_id" />
-                <field name="odoo_field_id" />
-                <field name="required" />
+                <field name="line_ids" />
             </tree>
         </field>
         <field name="field_parent" eval="False"/>
