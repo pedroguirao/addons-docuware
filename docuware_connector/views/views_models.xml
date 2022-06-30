@@ -121,17 +121,24 @@
                         </button>
                     </div>
                     <h1>
-                        <field name="name"/>
+                        <field name="name" required="1"/>
                     </h1>
                     <group name="type">
                         <field name="type" />
-                        <field name="user_ids" widget="many2many_tags"/>
+                        <field name="dictionary_id" attrs="{'invisible':[('type','=',False)]}"/>
+                        <field name="user_ids"/>
                     </group>
-                    <group groups="base.group_system">
-                        <button name="get_default_filecabinet_documents" string="Get Documents" type="object" class="oe_highlight oe_read_only"/>
-                    </group>
+                    <div name="technical" string="Technical operations" groups="base.group_system">
+                        <group name="documents">
+                            <field name="guid" readonly="1"/>
+                            <button name="get_default_filecabinet_documents" string="Get Documents" type="object" class="oe_highlight oe_read_only"/>
+                            <field name="cabinet_error_log"/>
+                        </group>
+                    </div>
+
+                    <!--
                     <notebook>
-                        <!--<page name="documents" string="Documents" groups="base.group_system">
+                        <page name="documents" string="Documents" groups="base.group_system">
                             <group name="documents" col="4">
                                 <field name="cabinet_document_ids">
                                     <tree name="documents_in_cabinet" string="Documents" create="false">
@@ -142,15 +149,16 @@
                                     </tree>
                                 </field>
                             </group>
-                        </page>-->
+                        </page>
                         <page name="technical" string="Technical" groups="base.group_system">
                             <group name="documents">
                                 <field name="guid"/>
+                        <button name="get_default_filecabinet_documents" string="Get Documents" type="object" class="oe_highlight oe_read_only"/>
                                 <field name="cabinet_error_log"/>
                             </group>
                         </page>
                     </notebook>
-
+-->
                 </sheet>
             </form>
         </field>
@@ -172,10 +180,10 @@
         <field name="arch" type="xml">
             <form>
                 <sheet string="Fields">
-                    <group name="basic_params" col="4">
-                        <field name="name" />
-                        <field name="line_ids" />
-                    </group>
+                    <h1>
+                        <field name="name" required="1"/>
+                    </h1>
+                    <field name="line_ids" />
                 </sheet>
 
             </form>

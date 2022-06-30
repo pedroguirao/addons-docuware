@@ -191,9 +191,6 @@
         <field name="arch" type="xml">
             <group name="type" position="after">
                 <group attrs="{'invisible':[('type', 'not in', ('nominas'))]}">
-                    <group name="Docuware_nominas">
-                        <field name="dictionary_id"/>
-                    </group>
                     <group name="Viafirma">
                         <field name="viafirma_template" />
                         <field name="viafirma_notifications" widget="many2many_tags"/>

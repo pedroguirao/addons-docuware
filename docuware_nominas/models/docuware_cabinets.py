@@ -18,7 +18,6 @@ class DocuwareCabinets(models.Model):
     _inherit = "docuware.cabinet"
 
     type = fields.Selection(selection_add=[('nominas', 'Nóminas')], ondelete={"nominas": "set null"})
-    dictionary_id = fields.Many2one('docuware.dictionary', string='Dictionary')
     # se llamaba mandatory_field_ids
     viafirma_template = fields.Many2one('viafirma.templates', string='Viafirma Template')
     viafirma_notifications = fields.Many2many(

@@ -17,3 +17,4 @@ class DocuwareDictionary(models.Model):
 
     name = fields.Char(string='Name')
     line_ids = fields.One2many('docuware.dictionary.line', 'dictionary_id',  string='Lines')
+    cabinet_ids = fields.One2many('docuware.cabinet', 'dictionary_id', string='Dictionaries')

@@ -28,6 +28,8 @@ class DocuwareCabinet(models.Model):
 
     name = fields.Char(string='Cabinet')
     guid = fields.Char(string='Cabinet Guid')
+    dictionary_id = fields.Many2one('docuware.dictionary', string='Dictionary')
+
     #cabinet_document_ids = fields.One2many('docuware.document','cabinet_id', string='Documents')
     #REVISAR
     cabinet_error_log = fields.Text(string='Error log')
