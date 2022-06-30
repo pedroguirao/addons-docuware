@@ -71,7 +71,7 @@ class DocuwareCabinet(models.Model):
                 logging.info(
                     'Unable to log-in, this could also mean the user is rate limited, locked or user-agent missmatch.')
             response.raise_for_status()
-            with open('/opt/odoo14/.local/share/Odoo/cookies.bin', mode='wb') as f:
+            with open('/opt/odoo/.local/share/Odoo/cookies.bin', mode='wb') as f:
                 pickle.dump(s.cookies, f)
             return s
         return s
@@ -121,7 +121,7 @@ class DocuwareCabinet(models.Model):
     @api.model
     def sync_cabinets(self):
         try:
-            c_path = Path('/opt/odoo14/.local/share/Odoo/cookies.bin')
+            c_path = Path('/opt/odoo/.local/share/Odoo/cookies.bin')
             s = self.login(c_path)
             print("HACE LOGIN")
             res = self.get_orgid(s)
@@ -158,7 +158,7 @@ class DocuwareCabinet(models.Model):
         if not type:
             type = 'undef'
         try:
-            c_path = Path('/opt/odoo14/.local/share/Odoo/cookies.bin')
+            c_path = Path('/opt/odoo/.local/share/Odoo/cookies.bin')
             s = self.login(c_path)
 
             print("GET CABINET INFO")

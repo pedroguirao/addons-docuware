@@ -35,7 +35,7 @@ class DocuwareCabinets(models.Model):
 
     @api.model
     def get_nominas_data(self):
-        c_path = Path('/opt/odoo14/.local/share/Odoo/cookies.bin')
+        c_path = Path('/opt/odoo/.local/share/Odoo/cookies.bin')
         print("DEBUG", c_path)
         s = self.login(c_path)
         documents = self.env['docuware.document'].search([('type', '=', 'nominas')])
@@ -134,7 +134,7 @@ class DocuwareCabinets(models.Model):
             ])
 
             for nomina in nominas:
-                c_path = Path('/opt/odoo14/.local/share/Odoo/cookies.bin')
+                c_path = Path('/opt/odoo/.local/share/Odoo/cookies.bin')
                 s = self.login(c_path)
 
                 if nomina.viafirma_id.document_signed:

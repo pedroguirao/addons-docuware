@@ -50,7 +50,7 @@ class DocuwareOperations(models.Model):
                 logging.info(
                     'Unable to log-in, this could also mean the user is rate limited, locked or user-agent missmatch.')
             response.raise_for_status()
-            with open('/opt/odoo14/.local/share/Odoo/cookies.bin', mode='wb') as f:
+            with open('/opt/odoo/.local/share/Odoo/cookies.bin', mode='wb') as f:
                 pickle.dump(s.cookies, f)
             return s
         return s
