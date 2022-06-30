@@ -80,19 +80,9 @@
     <record id="menu_docuware_configuration" model="ir.ui.menu">
         <field name="active" eval="True"/>
         <field name="groups_id" eval="False"/>
-        <field name="name">Config</field>
+        <field name="name">Configuration</field>
         <field name="parent_id" ref="menu_docuware"/>
         <field name="sequence">5</field>
-        <field name="web_icon" eval="False"/>
-    </record>
-
-    <record id="menu_docuware_configuration_dictionary" model="ir.ui.menu">
-        <field name="action" ref="action_configuration_dictionary"/>
-        <field name="active" eval="True"/>
-        <field name="groups_id" eval="False"/>
-        <field name="name">Dictionary</field>
-        <field name="parent_id" ref="menu_docuware_configuration"/>
-        <field name="sequence">1</field>
         <field name="web_icon" eval="False"/>
     </record>
 
@@ -101,6 +91,16 @@
         <field name="active" eval="True"/>
         <field name="groups_id" eval="False"/>
         <field name="name">Cabinets</field>
+        <field name="parent_id" ref="menu_docuware_configuration"/>
+        <field name="sequence">1</field>
+        <field name="web_icon" eval="False"/>
+    </record>
+
+    <record id="menu_docuware_configuration_dictionary" model="ir.ui.menu">
+        <field name="action" ref="action_configuration_dictionary"/>
+        <field name="active" eval="True"/>
+        <field name="groups_id" eval="False"/>
+        <field name="name">Dictionary</field>
         <field name="parent_id" ref="menu_docuware_configuration"/>
         <field name="sequence">2</field>
         <field name="web_icon" eval="False"/>
@@ -111,7 +111,7 @@
         <field name="groups_id" eval="False"/>
         <field name="name">Operations</field>
         <field name="parent_id" ref="menu_docuware_configuration"/>
-        <field name="sequence">2</field>
+        <field name="sequence">3</field>
         <field name="web_icon" eval="False"/>
     </record>
 
