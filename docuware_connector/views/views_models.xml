@@ -128,7 +128,13 @@
                     </group>
                     <notebook>
                         <page name="users" string="Users">
-                            <field name="user_ids"/>
+                            <field name="user_ids" >
+                                <tree>
+                                    <field name="name" />
+                                    <field name="email" />
+                                    <field name="departmnent_id" />
+                                </tree>
+                            </field>
                         </page>
                         <page name="technical" string="Technical" groups="base.group_system">
                             <button name="get_default_filecabinet_documents" string="Get Documents" type="object" class="oe_highlight oe_read_only"/>
@@ -166,12 +172,12 @@
                         <field name="cabinet_ids" widget="many2many_tags"/>
                     </group>
                     <field name="line_ids">
-                            <tree editable="bottom">
-                                <field name="name" required="1"/>
-                                <field name="odoo_field_id"/>
-                                <field name="required"/>
-                                <field name="dictionary_id" invisible="1"/>
-                            </tree>
+                        <tree editable="bottom">
+                            <field name="name" required="1"/>
+                            <field name="odoo_field_id"/>
+                            <field name="required"/>
+                            <field name="dictionary_id" invisible="1"/>
+                        </tree>
                     </field>
                 </sheet>
 
