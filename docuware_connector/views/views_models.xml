@@ -126,39 +126,19 @@
                     <group name="type">
                         <field name="type" />
                         <field name="dictionary_id" attrs="{'readonly':[('type','=',False)]}"/>
-                        <field name="user_ids"/>
                     </group>
-                    <div name="technical" string="Technical operations" groups="base.group_system">
-                        <group name="documents">
-                            <field name="guid" readonly="1"/>
-                            <button name="get_default_filecabinet_documents" string="Get Documents" type="object" class="oe_highlight oe_read_only"/>
-                            <field name="cabinet_error_log"/>
-                        </group>
-                    </div>
-
-                    <!--
                     <notebook>
-                        <page name="documents" string="Documents" groups="base.group_system">
-                            <group name="documents" col="4">
-                                <field name="cabinet_document_ids">
-                                    <tree name="documents_in_cabinet" string="Documents" create="false">
-                                        <field name="name"/>
-                                        <field name="operation_done"/>
-                                        <field name="binary" widget="binary"/>
-                                        <button name="get_document_data" string="Get Document" type="object" icon="fa-share-square-o"/>
-                                    </tree>
-                                </field>
-                            </group>
+                        <page name="users" string="Users">
+                            <field name="user_ids"/>
                         </page>
                         <page name="technical" string="Technical" groups="base.group_system">
-                            <group name="documents">
+                            <group name="cabinet_technical">
                                 <field name="guid"/>
-                        <button name="get_default_filecabinet_documents" string="Get Documents" type="object" class="oe_highlight oe_read_only"/>
+                                <button name="get_default_filecabinet_documents" string="Get Documents" type="object" class="oe_highlight oe_read_only"/>
                                 <field name="cabinet_error_log"/>
                             </group>
                         </page>
                     </notebook>
--->
                 </sheet>
             </form>
         </field>
@@ -183,7 +163,17 @@
                     <h1>
                         <field name="name" required="1"/>
                     </h1>
-                    <field name="line_ids" />
+                    <group>
+                        <field name="cabinet_ids" widget="many2many_tags"/>
+                    </group>
+                    <field name="line_ids">
+                            <tree editable="bottom">
+                                <field name="name" required="1"/>
+                                <field name="odoo_field_id"/>
+                                <field name="required"/>
+                                <field name="dictionary_id" invisible="1"/>
+                            </tree>
+                    </field>
                 </sheet>
 
             </form>
@@ -204,7 +194,7 @@
         <field name="arch" type="xml">
             <tree >
                 <field name="name" />
-                <field name="line_ids" />
+                <field name="cabinet_ids" widget="many2many_tags" />
             </tree>
         </field>
         <field name="field_parent" eval="False"/>
