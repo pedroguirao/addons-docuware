@@ -39,7 +39,7 @@
     </record>
 
     <menuitem
-            action="action_configuration_dictionary"
+            action="action_docuware_cabinet"
             id="menu_docuware"
             name="Docuware"
             sequence="10"
