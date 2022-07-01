@@ -6,11 +6,7 @@
 ##############################################################################
 
 from odoo import api, fields, models, _
-import pickle, logging, json
-import requests
 from datetime import datetime
-import base64
-from requests.structures import CaseInsensitiveDict
 from pathlib import Path
 
 
@@ -34,18 +30,18 @@ class DocuwareCabinets(models.Model):
 
     @api.model
     def get_nominas_data(self):
-        c_path = Path('/opt/odoo/.local/share/Odoo/cookies.bin')
+        c_path = Path('/tmp/cookies.bin')
         print("DEBUG", c_path)
         s = self.login(c_path)
-        documents = self.env['docuware.document'].search([('type', '=', 'nominas')])
+        documents = self.env['docuware.document'].search([('type', '=', 'nomina')])
         for document in documents:
-            if document.docuware_nomina_done:
+            if document.operation_done:
                 print("Not done")
-                done = document.get_document_data_from_operation(document.cabinet_id.mandatory_field_ids, s)
+                done = document.get_document_data_from_operation(document.cabinet_id.dictionary_id.line_ids, s)
                 try:
                     if done:
                         print("DONE")
-                        document.docuware_nomina_done = done
+                        document.operation_done = done
                         # Get partner data to send viafirma notification
                         signants = document.get_signants_test()
                         if signants:
@@ -81,67 +77,50 @@ class DocuwareCabinets(models.Model):
                         else:
                             #document.kanban_state_label = document.legend_blocked
                             document.kanban_state = 'blocked'
-                            if not document.document_error_log:
-                                document.document_error_log = str(datetime.now()) + " " + \
-                                                                       "Can't find a user with the given NIF" + "\n"
-                                return False
-                            else:
-                                document.document_error_log += str(datetime.now()) + " " + \
+                            document.error_log = str(datetime.now()) + " " + \
                                                                         "Can't find a user with the given NIF" + "\n"
-                                return False
+                            return False
+
                 except Exception as e:
                     #document.kanban_state_label = document.legend_blocked
                     document.kanban_state = 'blocked'
-                    if not document.document_error_log:
-                        document.document_error_log = str(datetime.now()) + " " + str(e) + "\n"
-                    else:
-                        document.document_error_log += str(datetime.now()) + " " + str(e) + "\n"
+                    document.error_log = str(datetime.now()) + " " + str(e) + "\n"
         self.logout(c_path, s)
 
     @api.model
     def call_viafirma_nominas(self):
-        cabinets = self.env['docuware.cabinet'].search([('type', '=', 'nominas')])
         ready = self.env['docuware.stage'].search([('name', '=', 'Ready')]).id
-        for cabinet in cabinets:
-            nominas = self.env['docuware.document'].search([
-                ('stage_id', '=', ready),
-                ('cabinet_id', '=', cabinet.id),
-            ])
-            print("DEBUG", nominas)
-            for nomina in nominas:
-                try:
-                    nomina.viafirma_id.call_viafirma()
-                    processing = self.env['docuware.stage'].search([('name', '=', 'Processing')]).id
-                    nomina.stage_id = processing
-                    nomina.kanban_state = 'done'
-                except Exception as e:
-                    nomina.kanban_state = 'blocked'
-                    if not nomina.document_error_log:
-                        nomina.document_error_log = str(datetime.now()) + " " + str(e) + "\n"
-                    else:
-                        nomina.document_error_log += str(datetime.now()) + " " + str(e) + "\n"
+        nominas = self.env['docuware.document'].search([
+            ('stage_id', '=', ready),
+            ('type', '=', 'nomina'),
+        ])
+        for nomina in nominas:
+            try:
+                nomina.viafirma_id.call_viafirma()
+                processing = self.env['docuware.stage'].search([('name', '=', 'Processing')]).id
+                nomina.stage_id = processing
+                nomina.kanban_state = 'done'
+            except Exception as e:
+                nomina.kanban_state = 'blocked'
+                nomina.error_log = str(datetime.now()) + " " + str(e) + "\n"
 
     @api.model
     def get_signed_nominas(self):
-        cabinets = self.env['docuware.cabinet'].search([('type', '=', 'nominas')])
         processing = self.env['docuware.stage'].search([('name', '=', 'Processing')]).id
         signed = self.env['docuware.stage'].search([('name', '=', 'Signed')]).id
-        for cabinet in cabinets:
-            nominas = self.env['docuware.document'].search([
-                ('stage_id', '=', processing),
-                ('cabinet_id', '=', cabinet.id)
-            ])
+        nominas = self.env['docuware.document'].search([
+            ('stage_id', '=', processing),
+            ('type', '=', 'nomina'),
+        ])
+        c_path = Path('/tmp/cookies.bin')
+        s = self.login(c_path)
+        for nomina in nominas:
+            if nomina.viafirma_id.document_signed:
+                result = nomina.upload_and_clip(s)
+                if result:
+                    nomina.kanban_state = 'done'
+                    nomina.stage_id = signed
+                else:
+                    nomina.kanban_state = 'blocked'
 
-            for nomina in nominas:
-                c_path = Path('/opt/odoo/.local/share/Odoo/cookies.bin')
-                s = self.login(c_path)
-
-                if nomina.viafirma_id.document_signed:
-                    result = nomina.upload(s)
-                    if result:
-                        nomina.kanban_state = 'done'
-                        nomina.stage_id = signed
-                    else:
-                        nomina.kanban_state = 'blocked'
-
-                self.logout(c_path, s)
+        self.logout(c_path, s)

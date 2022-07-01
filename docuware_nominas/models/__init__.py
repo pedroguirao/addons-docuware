@@ -4,9 +4,7 @@
 #    Copyright (C) 2021 Serincloud S.L. All Rights Reserved
 #    PedroGuirao pedro@serincloud.com
 ##############################################################################
-from . import docuware_operations
 from . import docuware_nominas
-#from . import res_partner
 from . import docuware_cabinets
 
 

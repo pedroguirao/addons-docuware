@@ -4,7 +4,7 @@
     <record id="action_docuware_nominas" model="ir.actions.act_window">
         <field name="binding_model_id" eval="False"/>
         <field name="binding_type">action</field>
-        <field name="domain" eval="[('document_type', '=', 'nomina')]"/>
+        <field name="domain" eval="[('type', '=', 'nomina')]"/>
         <field name="filter" eval="False"/>
         <field name="groups_id" eval="[(6, 0, [])]"/>
         <field name="limit">80</field>

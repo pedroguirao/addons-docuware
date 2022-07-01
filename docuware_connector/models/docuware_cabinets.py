@@ -8,9 +8,8 @@
 from odoo import api, fields, models, _
 import pickle, logging, json
 import requests
-from requests.structures import CaseInsensitiveDict
 from pathlib import Path
-from datetime import datetime, timedelta
+from datetime import datetime
 from odoo.exceptions import AccessError, UserError, RedirectWarning, ValidationError, Warning
 
 TYPES = [
@@ -25,58 +24,57 @@ class DocuwareCabinet(models.Model):
     type = fields.Selection(
         selection=TYPES,
     )
-
     name = fields.Char(string='Cabinet')
     guid = fields.Char(string='Cabinet Guid')
     dictionary_id = fields.Many2one('docuware.dictionary', string='Dictionary')
 
-    #cabinet_document_ids = fields.One2many('docuware.document','cabinet_id', string='Documents')
-    #REVISAR
-    cabinet_error_log = fields.Text(string='Error log')
-
+    error_log = fields.Text(string='Error log')
     user_ids = fields.Many2many('res.users', string='Users')
-
     document_count = fields.Integer(string='Docs', compute='get_docs_count')
 
     def get_docs_count(self):
         docs = self.env['docuware.document'].search([('cabinet_id', '=', self.id)])
-        self.document_count = docs
+        self.document_count = len(docs)
 
     def login(self, c_path):
-        # Session will hold the cookies
-        credentials = {'user': self.env.user.company_id.docuware_user,
-                       'password': self.env.user.company_id.docuware_pass}
-        s = requests.Session()
-        s.headers.update({'User-Agent': 'welcome-letter'})
-        s.headers.update({'Accept': 'application/json'})
-        if c_path.exists():
-            with open(c_path, mode='rb') as f:
-                s.cookies.update(pickle.load(f))
+        try:
+            # Session will hold the cookies
+            credentials = {'user': self.env.user.company_id.docuware_user,
+                           'password': self.env.user.company_id.docuware_pass}
+            s = requests.Session()
+            s.headers.update({'User-Agent': 'welcome-letter'})
+            s.headers.update({'Accept': 'application/json'})
+            if c_path.exists():
+                with open(c_path, mode='rb') as f:
+                    s.cookies.update(pickle.load(f))
 
-        else:
-            url = f'{self.env.user.company_id.docuware_url}/docuware/platform/Account/Logon'
-            payload = {
-                'LicenseType': '',
-                'UserName': credentials['user'],
-                'Password': credentials['password'],
-                'RedirectToMyselfInCaseOfError': 'false',
-                'RememberMe': 'false',
-            }
+            else:
+                url = f'{self.env.user.company_id.docuware_url}/docuware/platform/Account/Logon'
+                payload = {
+                    'LicenseType': '',
+                    'UserName': credentials['user'],
+                    'Password': credentials['password'],
+                    'RedirectToMyselfInCaseOfError': 'false',
+                    'RememberMe': 'false',
+                }
 
-            headers = {
-                'Content-Type': 'application/x-www-form-urlencoded',
-            }
-            print("DEBUG", payload, "=", url)
-            response = s.request('POST', url, headers=headers, data=payload, timeout=30)
-            print("DEBUG", response)
-            if response.status_code == 401:
-                logging.info(
-                    'Unable to log-in, this could also mean the user is rate limited, locked or user-agent missmatch.')
-            response.raise_for_status()
-            with open('/opt/odoo/.local/share/Odoo/cookies.bin', mode='wb') as f:
-                pickle.dump(s.cookies, f)
+                headers = {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                }
+                print("DEBUG", payload, "=", url)
+                response = s.request('POST', url, headers=headers, data=payload, timeout=30)
+                print("DEBUG", response)
+                if response.status_code == 401:
+                    logging.info(
+                        'Unable to log-in, this could also mean the user is rate limited, locked or user-agent missmatch.')
+                response.raise_for_status()
+                with open('/tmp/cookies.bin', mode='wb') as f:
+                    pickle.dump(s.cookies, f)
+                return s
             return s
-        return s
+        except Exception as e:
+            self.error_log = str(datetime.now()) + " " + str(e) + "\n"
+            return False
 
     #def upload(self, path, fields, s) -> dict:
     #    # upload file, by reusing login cookie
@@ -123,7 +121,7 @@ class DocuwareCabinet(models.Model):
     @api.model
     def sync_cabinets(self):
         try:
-            c_path = Path('/opt/odoo/.local/share/Odoo/cookies.bin')
+            c_path = Path('/tmp/cookies.bin')
             s = self.login(c_path)
             print("HACE LOGIN")
             res = self.get_orgid(s)
@@ -148,19 +146,13 @@ class DocuwareCabinet(models.Model):
                                     'name': filecabinets['FileCabinet'][j]['Name'],
                                     'guid': filecabinets['FileCabinet'][j]['Id'],
                                 })
-
             self.logout(c_path, s)
-
-
-
         except Exception as e:
             raise UserError("Failed to connect to Docuware Server , please try again later" + str(e))
 
     def get_filecabinet_documents(self, type):
-        if not type:
-            type = 'undef'
         try:
-            c_path = Path('/opt/odoo/.local/share/Odoo/cookies.bin')
+            c_path = Path('/tmp/cookies.bin')
             s = self.login(c_path)
 
             print("GET CABINET INFO")
@@ -179,19 +171,18 @@ class DocuwareCabinet(models.Model):
                         new_document = self.env['docuware.document'].create({
                             'name': res['Items'][i]['Title'],
                             'cabinet_id': self.id,
-                            'document_type': type,
-                            #'docuware_cabinet_guid': filecabinets['FileCabinet'][j]['Id'],
+                            'type': type,
                         })
                         for j in range(len(res['Items'][i]['Fields'])):
                             if res['Items'][i]['Fields'][j]['FieldName'] == 'DWDOCID':
-                                new_document.document_guid = res['Items'][i]['Fields'][j]['Item']
+                                new_document.guid = res['Items'][i]['Fields'][j]['Item']
 
             self.logout(c_path, s)
         except Exception as e:
-            if not self.cabinet_error_log:
-                self.cabinet_error_log = str(datetime.now()) + " " + str(e) + "\n"
-            else:
-                self.cabinet_error_log += str(datetime.now()) + " " + str(e) + "\n"
+            self.error_log = str(datetime.now()) + " " + str(e) + "\n"
 
     def get_default_filecabinet_documents(self):
-        self.get_filecabinet_documents('undef')
+        if self.type:
+            self.get_filecabinet_documents(self.type)
+        else:
+            self.error_log = str(datetime.now()) + " " + "Cabinet doesn't have type configured" + "\n"

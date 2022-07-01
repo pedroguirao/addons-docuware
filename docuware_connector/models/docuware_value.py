@@ -33,4 +33,9 @@ class DocuwareValues(models.Model):
             if object:
                 return object
             else:
-                return False
+                object = self.env[keys[0]].sudo().search([(keys[1], '=', self.value.lower())], limit=1)
+                print(object)
+                if object:
+                    return object
+                else:
+                    return False

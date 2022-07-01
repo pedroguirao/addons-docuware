@@ -22,16 +22,15 @@ class DocuwareDocument(models.Model):
 
     name = fields.Char(string='Name')
     cabinet_id = fields.Many2one('docuware.cabinet', string='Cabinet')
-    #docuware_operations_id = fields.Many2one('docuware.operations', string='Operations')
-    document_guid = fields.Char(string='Cabinet Guid')
-    document_error_log = fields.Text(string="Error log")
+    guid = fields.Char(string='Document Guid')
+    error_log = fields.Text(string="Error log")
 
     operation_done = fields.Boolean("Operation Done")
 
     json = fields.Text("Server Json")
     binary = fields.Binary("Original")
     value_ids = fields.One2many('docuware.value', 'document_id', string='Fields')
-    document_type = fields.Selection(selection=TYPES, string='Document type')
+    type = fields.Selection(selection=TYPES, string='Document type')
 
     kanban_state = fields.Selection([
         ('done', 'Done'),
@@ -67,7 +66,7 @@ class DocuwareDocument(models.Model):
 
     ### Show information sent by docuware about document, just for debug ###
     def get_document_data(self):
-        c_path = Path('/opt/odoo/.local/share/Odoo/cookies.bin')
+        c_path = Path('/tmp/cookies.bin')
         credentials = {'user': self.env.user.company_id.docuware_user,
                        'password': self.env.user.company_id.docuware_pass}
         s = self.cabinet_id.login(credentials, c_path)
@@ -76,7 +75,7 @@ class DocuwareDocument(models.Model):
             try:
                 url = f'{self.env.user.company_id.docuware_url}' \
                       f'/docuware/platform/FileCabinets/{document.docuware_cabinet_id.guid}' \
-                      f'/Documents/{document.document_guid}'
+                      f'/Documents/{document.guid}'
                 resp = s.request('GET', url)
 
                 if resp.status_code == 200:
@@ -86,11 +85,7 @@ class DocuwareDocument(models.Model):
                         print(res['Fields'][i]['FieldName'])
 
             except Exception as e:
-                if not document.docuware_document_error_log:
-                    document.document_error_log = str(datetime.now()) + " " + str(e) + "\n"
-                else:
-                    document.document_error_log += str(datetime.now()) + " " + str(e) + "\n"
-
+                document.error_log = str(datetime.now()) + " " + str(e) + "\n"
         self.cabinet_id.logout(c_path, s)
 
     def generate_attachment(self, s, img_url):
@@ -102,16 +97,13 @@ class DocuwareDocument(models.Model):
                 return base64.b64encode(response.content)
         else:
             self.kanban_state_label = self.legend_blocked
-            if not self.document_error_log:
-                self.document_error_log = str(datetime.now()) + " " + "No document received" + "\n"
-            else:
-                self.document_error_log += str(datetime.now()) + " " + "No document received" + "\n"
+            self.error_log = str(datetime.now()) + " " + "No document received" + "\n"
 
     def get_document_data_from_operation(self, fields, s):
         try:
             url = f'{self.env.user.company_id.docuware_url}' \
                   f'/docuware/platform/FileCabinets/{self.cabinet_id.guid}' \
-                  f'/Documents/{self.document_guid}'
+                  f'/Documents/{self.guid}'
             resp = s.request('GET', url)
 
             if resp.status_code == 200:
@@ -143,18 +135,11 @@ class DocuwareDocument(models.Model):
                     return True
                 else:
                     self.kanban_state_label = self.legend_blocked
-                    if not self.docuware_document_error_log:
-                        self.docuware_document_error_log = str(datetime.now()) + " " + "Need more fields in docuware " \
-                                                                                       "to complete operation" + "\n"
-                    else:
-                        self.docuware_document_error_log = str(datetime.now()) + " " + "Need more fields in docuware " \
+                    self.error_log = str(datetime.now()) + " " + "Need more fields in docuware " \
                                                                                        "to complete operation" + "\n"
                     return False
         except Exception as e:
-            if not self.docuware_document_error_log:
-                self.docuware_document_error_log = str(datetime.now()) + " " + str(e) + "\n"
-            else:
-                self.docuware_document_error_log += str(datetime.now()) + " " + str(e) + "\n"
+            self.error_log = str(datetime.now()) + " " + str(e) + "\n"
 
 
 

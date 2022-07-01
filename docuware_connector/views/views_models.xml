@@ -11,15 +11,15 @@
                     </h2>
                     <group name="basic_params" col="4">
                         <field name="operation_done"/>
-                        <field name="binary"/>
-                        <field name="cabinet_id"/>
-                        <field name="document_guid"/>
+                        <field name="binary" readonly="1"/>
+                        <field name="cabinet_id" readonly="1"/>
+                        <field name="guid" readonly="1"/>
                     </group>
-                    <group name="basic_fields" col="1">
-                        <field name="value_ids" widget="many2many_tags"/>
+                    <group name="basic_fields" col="1" readonly="1">
+                        <field name="value_ids" widget="many2many_tags" readonly="1"/>
                     </group>
                     <group name="json" col="4">
-                        <field name="json"/>
+                        <field name="json" readonly="1"/>
                     </group>
                     <!--<group>
                         <button name="get_filecabinet_documents" string="Get Documents" type="object" class="oe_highlight oe_read_only"/>
@@ -58,7 +58,7 @@
     <record id="docuware_document_tree" model="ir.ui.view">
         <field name="active" eval="True"/>
         <field name="arch" type="xml">
-            <tree >
+            <tree create="false">
                 <field name="name" />
             </tree>
         </field>
@@ -76,7 +76,7 @@
     <record id="docuware_cabinets_tree" model="ir.ui.view">
         <field name="active" eval="True"/>
         <field name="arch" type="xml">
-            <tree >
+            <tree  create="false">
                 <field name="name"/>
                 <field name="type"/>
                 <field name="write_date"/>
@@ -112,7 +112,7 @@
     <record id="docuware_cabinet_form" model="ir.ui.view">
         <field name="active" eval="True"/>
         <field name="arch" type="xml">
-            <form>
+            <form  create="false">
                 <sheet string="Cabinet">
                     <div class="oe_button_box" name="button_box">
                         <button class="oe_stat_button" type="action" name="%(docuware_connector.action_view_cabinet_docs)d" icon="fa-usd">
@@ -139,7 +139,7 @@
                             <button name="get_default_filecabinet_documents" string="Get Documents" type="object" class="oe_highlight oe_read_only"/>
                             <group name="cabinet_technical">
                                 <field name="guid"/>
-                                <field name="cabinet_error_log"/>
+                                <field name="error_log"/>
                             </group>
                         </page>
                     </notebook>
