@@ -31,17 +31,14 @@ class DocuwareCabinets(models.Model):
     @api.model
     def get_nominas_data(self):
         c_path = Path('/tmp/cookies.bin')
-        print("DEBUG", c_path)
         s = self.login(c_path)
-        documents = self.env['docuware.document'].search([('type', '=', 'nomina')])
-        for document in documents:
-            if document.operation_done:
-                print("Not done")
+        if s:
+            stage_id = self.env['docuware.stage'].search([('name', '=', 'New')]).id
+            documents = self.env['docuware.document'].search([('type', '=', 'nomina'),('stage_id', '=', stage_id)])
+            for document in documents:
                 done = document.get_document_data_from_operation(document.cabinet_id.dictionary_id.line_ids, s)
                 try:
                     if done:
-                        print("DONE")
-                        document.operation_done = done
                         # Get partner data to send viafirma notification
                         signants = document.get_signants_test()
                         if signants:
@@ -60,6 +57,7 @@ class DocuwareCabinets(models.Model):
                             viafirma = document.viafirma_id = self.env['viafirma'].create({
                                 'name': str(document.name),
                                 'noti_text': str(document.name),
+                                'noti_detail': "Document to Sign " + str(document.name),
                                 'noti_subject': str(document.name),
                                 'template_id': document.cabinet_id.viafirma_template.id,
                                 'notification_type_ids': [(6, 0,document.cabinet_id.viafirma_notifications.ids)],
@@ -122,5 +120,4 @@ class DocuwareCabinets(models.Model):
                     nomina.stage_id = signed
                 else:
                     nomina.kanban_state = 'blocked'
-
         self.logout(c_path, s)

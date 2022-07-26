@@ -25,8 +25,6 @@ class DocuwareDocument(models.Model):
     guid = fields.Char(string='Document Guid')
     error_log = fields.Text(string="Error log")
 
-    operation_done = fields.Boolean("Operation Done")
-
     json = fields.Text("Server Json")
     binary = fields.Binary("Original")
     value_ids = fields.One2many('docuware.value', 'document_id', string='Fields')
@@ -112,7 +110,6 @@ class DocuwareDocument(models.Model):
                 fdownload = False
 
                 for j in range(len(res['Links'])):
-                    print(res['Links'][j]['rel'])
                     if res['Links'][j]['rel'] == "fileDownload":
                         fdownload = res['Links'][j]['href']
                 self.json = res
@@ -140,6 +137,7 @@ class DocuwareDocument(models.Model):
                     return False
         except Exception as e:
             self.error_log = str(datetime.now()) + " " + str(e) + "\n"
+            return False
 
 
 

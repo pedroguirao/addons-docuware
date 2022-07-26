@@ -61,9 +61,7 @@ class DocuwareCabinet(models.Model):
                 headers = {
                     'Content-Type': 'application/x-www-form-urlencoded',
                 }
-                print("DEBUG", payload, "=", url)
                 response = s.request('POST', url, headers=headers, data=payload, timeout=30)
-                print("DEBUG", response)
                 if response.status_code == 401:
                     logging.info(
                         'Unable to log-in, this could also mean the user is rate limited, locked or user-agent missmatch.')
@@ -108,7 +106,6 @@ class DocuwareCabinet(models.Model):
     def get_orgid(self, s):
         url = f'{self.env.user.company_id.docuware_url}/docuware/platform/Organizations'
         resp = s.request('GET', url)
-        print('RESP', resp)
         if resp.status_code == 200:
             return json.loads(resp.content.decode('utf-8'))
 
@@ -123,19 +120,14 @@ class DocuwareCabinet(models.Model):
         try:
             c_path = Path('/tmp/cookies.bin')
             s = self.login(c_path)
-            print("HACE LOGIN")
             res = self.get_orgid(s)
-            print("GET ORGID")
             if res:
                 for i in range(len(res['Organization'])):
                     if res['Organization'][i]['Name'] == self.env.user.company_id.docuware_organization:
-                        print("DEBUG",res['Organization'][i]['Name'])
                         orgid = res['Organization'][i]['Guid']
                 if orgid:
-                    print("IF ORGID")
                     filecabinets = self.get_all_filecabinets(s, orgid)
                     if filecabinets:
-                        print("IF FILECABINETS")
                         docuware_cabinets = self.env['docuware.cabinet'].search([])
                         odoo_cabinets = []
                         for cabinet in docuware_cabinets:
@@ -155,7 +147,6 @@ class DocuwareCabinet(models.Model):
             c_path = Path('/tmp/cookies.bin')
             s = self.login(c_path)
 
-            print("GET CABINET INFO")
             url = f'{self.env.user.company_id.docuware_url}/docuware/platform/FileCabinets/{self.guid}/Documents'
             resp = s.request('GET', url)
             if resp.status_code == 200:
@@ -166,7 +157,6 @@ class DocuwareCabinet(models.Model):
                 for document in docuware_documents:
                     odoo_documents.append(document.name)
                 for i in range(len(res['Items'])):
-                    print("ITEMS", res['Items'][i]['Title'])
                     if res['Items'][i]['Title'] not in odoo_documents:
                         new_document = self.env['docuware.document'].create({
                             'name': res['Items'][i]['Title'],

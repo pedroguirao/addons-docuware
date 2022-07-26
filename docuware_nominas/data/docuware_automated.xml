@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+    <data>
+        <record id="ir_cron_docuware_get_nominas" model="ir.cron">
+            <field name="name">=> Docuware Get Nominas</field>
+            <field ref="model_docuware_cabinet" name="model_id"/>
+            <field eval="True" name="active" />
+            <field name="user_id" ref="base.user_root" />
+            <field name="interval_number">30</field>
+            <!--<field name="channel_id">1</field>-->
+            <field name="interval_type">minutes</field>
+            <field name="numbercall">-1</field>
+            <field eval="False" name="doall" />
+            <field name="state">code</field>
+            <field name="code">model.get_nominas()</field>
+        </record>
+
+        <record id="ir_cron_docuware_get_nominas_data" model="ir.cron">
+            <field name="name">=> Docuware Get Nominas Data</field>
+            <field ref="model_docuware_cabinet" name="model_id"/>
+            <field eval="True" name="active" />
+            <field name="user_id" ref="base.user_root" />
+            <field name="interval_number">35</field>
+            <!--<field name="channel_id">1</field>-->
+            <field name="interval_type">minutes</field>
+            <field name="numbercall">-1</field>
+            <field eval="False" name="doall" />
+            <field name="state">code</field>
+            <field name="code">model.get_nominas_data()</field>
+        </record>
+
+        <record id="ir_cron_docuware_nominas_call_viafirma" model="ir.cron">
+            <field name="name">=> Docuware Nominas Call Viafirma</field>
+            <field ref="model_docuware_cabinet" name="model_id"/>
+            <field eval="True" name="active" />
+            <field name="user_id" ref="base.user_root" />
+            <field name="interval_number">45</field>
+            <!--<field name="channel_id">1</field>-->
+            <field name="interval_type">minutes</field>
+            <field name="numbercall">-1</field>
+            <field eval="False" name="doall" />
+            <field name="state">code</field>
+            <field name="code">model.call_viafirma_nominas()</field>
+        </record>
+
+        <record id="ir_cron_docuware_get_signed_nominas" model="ir.cron">
+            <field name="name">=> Docuware Get Signed Nominas</field>
+            <field ref="model_docuware_cabinet" name="model_id"/>
+            <field eval="True" name="active" />
+            <field name="user_id" ref="base.user_root" />
+            <field name="interval_number">55</field>
+            <!--<field name="channel_id">1</field>-->
+            <field name="interval_type">minutes</field>
+            <field name="numbercall">-1</field>
+            <field eval="False" name="doall" />
+            <field name="state">code</field>
+            <field name="code">model.get_signed_nominas()</field>
+        </record>
+
+
+    </data>
+</odoo>

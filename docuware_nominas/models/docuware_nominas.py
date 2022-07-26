@@ -24,7 +24,6 @@ class DocuwareNominas(models.Model):
     viafirma_id = fields.Many2one('viafirma', string='Viafirma')
 
     def get_signants_test(self):
-        print("GET SIGNANT TEST")
         partners = []
         for field in self.value_ids:
             partner = field.get_value_field_relation()
@@ -65,7 +64,7 @@ class DocuwareNominas(models.Model):
             f = [
                 {
                         'FieldName': "ESTADO",
-                        'Item': "Nuevo",
+                        'Item': "Firmado",
                         'ItemElementName': 'String',
                     }
             ]

@@ -26,15 +26,12 @@ class DocuwareValues(models.Model):
 
     def get_value_field_relation(self):
         keys = self.odoo_field_id.split(",")
-        print("VALUES", keys)
         if keys:
             object = self.env[keys[0]].sudo().search([(keys[1], '=', self.value)], limit=1)
-            print(object)
             if object:
                 return object
             else:
                 object = self.env[keys[0]].sudo().search([(keys[1], '=', self.value.lower())], limit=1)
-                print(object)
                 if object:
                     return object
                 else:

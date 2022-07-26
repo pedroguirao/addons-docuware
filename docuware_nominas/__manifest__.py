@@ -6,7 +6,7 @@
 ##############################################################################
 
 {
-    "name": "Docuware Nominas V1",
+    "name": "Docuware Nominas",
     "version": "14.0.1.0.0",
     "category": "Documentation and digital sign by viafirma",
     "author": "PedroGuirao",
@@ -22,6 +22,7 @@
         'data/docuware_sync.xml',
         'views/views_models.xml',
         'views/views_menu.xml',
+        'data/docuware_automated.xml',
     ],
     "installable": True,
 }

@@ -10,7 +10,6 @@
                         <field name="name"/>
                     </h2>
                     <group name="basic_params" col="4">
-                        <field name="operation_done"/>
                         <field name="binary" readonly="1"/>
                         <field name="cabinet_id" readonly="1"/>
                         <field name="guid" readonly="1"/>
@@ -165,15 +164,15 @@
             <form>
                 <sheet string="Fields">
                     <h1>
-                        <field name="name" required="1"/>
+                        <field name="name" required="1" placeholder="Dictionary name like 'Nóminas'"/>
                     </h1>
                     <group>
                         <field name="cabinet_ids" widget="many2many_tags"/>
                     </group>
                     <field name="line_ids">
                         <tree editable="bottom">
-                            <field name="name" required="1"/>
-                            <field name="odoo_field_id"/>
+                            <field name="name" required="1" placeholder="Field name to dict"/>
+                            <field name="odoo_field_id" placeholder="model,field"/>
                             <field name="required"/>
                             <field name="dictionary_id" invisible="1"/>
                         </tree>
