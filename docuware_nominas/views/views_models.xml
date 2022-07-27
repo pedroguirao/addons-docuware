@@ -92,7 +92,7 @@
     <record id="docuware_nominas_kanban" model="ir.ui.view">
         <field name="active" eval="True"/>
         <field name="arch" type="xml">
-            <kanban default_group_by="stage_id" class="o_kanban_small_column" sample="1" edit="false" quick_create="false" create="false">
+            <kanban default_group_by="stage_id" class="o_kanban_small_column" sample="1" records_draggable="false" quick_create="false" create="false">
                 <field name="stage_id" options="{'group_by_tooltip': {'description': 'Description'}}"/>
                 <field name="legend_blocked"/>
                 <field name="legend_done"/>
