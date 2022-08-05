@@ -32,6 +32,7 @@ class DocuwareCabinets(models.Model):
     def get_nominas_data(self):
         c_path = Path('/tmp/cookies.bin')
         s = self.login(c_path)
+        print("S",s)
         if s:
             stage_id = self.env['docuware.stage'].search([('name', '=', 'New')]).id
             documents = self.env['docuware.document'].search([('type', '=', 'nomina'),('stage_id', '=', stage_id)])
@@ -83,7 +84,7 @@ class DocuwareCabinets(models.Model):
                     #document.kanban_state_label = document.legend_blocked
                     document.kanban_state = 'blocked'
                     document.error_log = str(datetime.now()) + " " + str(e) + "\n"
-        self.logout(c_path, s)
+            #self.logout(c_path, s)
 
     @api.model
     def call_viafirma_nominas(self):
@@ -112,12 +113,13 @@ class DocuwareCabinets(models.Model):
         ])
         c_path = Path('/tmp/cookies.bin')
         s = self.login(c_path)
-        for nomina in nominas:
-            if nomina.viafirma_id.document_signed:
-                result = nomina.upload_and_clip(s)
-                if result:
-                    nomina.kanban_state = 'done'
-                    nomina.stage_id = signed
-                else:
-                    nomina.kanban_state = 'blocked'
-        self.logout(c_path, s)
+        if s:
+            for nomina in nominas:
+                if nomina.viafirma_id.document_signed:
+                    result = nomina.upload_and_clip(s)
+                    if result:
+                        nomina.kanban_state = 'done'
+                        nomina.stage_id = signed
+                    else:
+                        nomina.kanban_state = 'blocked'
+            #self.logout(c_path, s)

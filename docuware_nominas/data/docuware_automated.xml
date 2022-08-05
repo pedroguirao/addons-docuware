@@ -34,7 +34,7 @@
             <field ref="model_docuware_cabinet" name="model_id"/>
             <field eval="True" name="active" />
             <field name="user_id" ref="base.user_root" />
-            <field name="interval_number">45</field>
+            <field name="interval_number">40</field>
             <!--<field name="channel_id">1</field>-->
             <field name="interval_type">minutes</field>
             <field name="numbercall">-1</field>
@@ -48,7 +48,7 @@
             <field ref="model_docuware_cabinet" name="model_id"/>
             <field eval="True" name="active" />
             <field name="user_id" ref="base.user_root" />
-            <field name="interval_number">55</field>
+            <field name="interval_number">45</field>
             <!--<field name="channel_id">1</field>-->
             <field name="interval_type">minutes</field>
             <field name="numbercall">-1</field>

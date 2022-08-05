@@ -88,8 +88,8 @@ class DocuwareNominas(models.Model):
             DWDOCID = 0
             for i in range(len(res['Fields'])):
                 if res['Fields'][i]['FieldName'] == 'DWDOCID':
+                    print("DWDOCID",res['Fields'][i]['FieldName'])
                     DWDOCID = res['Fields'][i]['Item']
-
             if DWDOCID != 0:
                 self.clip_nomina(DWDOCID, s)
                 return True

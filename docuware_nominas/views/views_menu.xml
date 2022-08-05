@@ -51,7 +51,7 @@
      <record id="menu_docuware_nominas_sync" model="ir.ui.menu">
          <field name="action" ref="docuware_get_nominas"/>
         <field name="active" eval="True"/>
-        <field name="groups_id" eval="False"/>
+        <field name="groups_id" eval="[(4,ref('base.group_system'))]"/>
         <field name="name">Get Nominas</field>
         <field name="parent_id" ref="docuware_connector.menu_docuware_operations"/>
         <field name="sequence">2</field>
@@ -61,7 +61,7 @@
     <record id="menu_docuware_nominas_data_sync" model="ir.ui.menu">
          <field name="action" ref="docuware_get_nominas_data"/>
         <field name="active" eval="True"/>
-        <field name="groups_id" eval="False"/>
+        <field name="groups_id" eval="[(4,ref('base.group_system'))]"/>
         <field name="name">Get Nominas Data</field>
         <field name="parent_id" ref="docuware_connector.menu_docuware_operations"/>
         <field name="sequence">3</field>
@@ -71,7 +71,7 @@
     <record id="menu_docuware_call_viafirma_nominas" model="ir.ui.menu">
          <field name="action" ref="call_viafirma_nominas"/>
         <field name="active" eval="True"/>
-        <field name="groups_id" eval="False"/>
+        <field name="groups_id" eval="[(4,ref('base.group_system'))]"/>
         <field name="name">Call Viafirma</field>
         <field name="parent_id" ref="docuware_connector.menu_docuware_operations"/>
         <field name="sequence">4</field>
@@ -81,7 +81,7 @@
     <record id="menu_docuware_signed_nominas" model="ir.ui.menu">
          <field name="action" ref="docuware_get_signed_nominas"/>
         <field name="active" eval="True"/>
-        <field name="groups_id" eval="False"/>
+        <field name="groups_id" eval="[(4,ref('base.group_system'))]"/>
         <field name="name">Get Signed Nominas</field>
         <field name="parent_id" ref="docuware_connector.menu_docuware_operations"/>
         <field name="sequence">5</field>
